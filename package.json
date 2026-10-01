@@ -3,9 +3,5 @@
   "title": "The Motors",
   "version": "1.0",
   "creator": "Onran",
-  "description": "Use Motors for move voxels via wires",
-  "dependencies": [
-    "!wire_mod@>=1.1.0",
-    "~advanced_logic"
-  ]
+  "description": "Use Motors for move voxels via wires"
 }

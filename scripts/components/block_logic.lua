@@ -1,7 +1,7 @@
 -- Copyright (C) 2026 Onran
 -- SPDX-License-Identifier: GPL-3.0-only
 
-local Mesh = require "Mesh"
+local Mesh = require "classes/Mesh"
 
 local tsf = entity.transform
 local body = entity.rigidbody

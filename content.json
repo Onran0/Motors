@@ -1,0 +1,9 @@
+{
+  "entities": [
+    "phys_block"
+  ],
+  "items": [],
+  "blocks": [
+    "mechanical_rotator"
+  ]
+}

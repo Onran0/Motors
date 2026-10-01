@@ -6,7 +6,7 @@ function M.assemble_mesh(startPos, endPos)
     local startX, startY, startZ = unpack(startPos)
     local endX, endY, endZ = unpack(endPos)
 
-    local origin = vec3.div(vec3.add(startPos, endPos), 2)
+    local origin = vec3.add(vec3.div(vec3.add(startPos, endPos), 2), { 0.5, 0, 0.5 })
 
     local mesh = Mesh.new(nil, { }, origin)
 
@@ -21,7 +21,7 @@ function M.assemble_mesh(startPos, endPos)
                     local variant = block.get_variant(x, y, z)
                     local states = block.get_states(x, y, z)
 
-                    mesh:put_block(localPos, variant, states)
+                    mesh:put_block(localPos, id, variant, states)
                 end
             end
         end

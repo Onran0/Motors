@@ -1,0 +1,3 @@
+@box from (-0.25,-0.25,-0.25) to (0.25,0.25,0.25) {
+    @part tags (top,bottom,north,south,east,west) texture "blocks:lightbulb" region (0,0,1,1)
+}

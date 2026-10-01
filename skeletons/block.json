@@ -1,5 +1,10 @@
 {
     "root": {
-        "model": "block"
+        "nodes": [
+            {
+                "name": "ttt",
+                "model": "motors__base__lightbulb__0"
+            }
+        ]
     }
 }

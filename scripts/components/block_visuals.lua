@@ -27,10 +27,11 @@ end
 
 do -- setup visuals
     local model_info = model_manager.get_model(block_id, block_variant)
-    rig:set_model(0, model_info.name)
+
+    rig:set_model(rig:index("ttt"), model_info.name)
 
     if model_info.type == DEFAULT_MODEL_TYPE then
-        rig:set_matrix(0, mat4.translate({-0.5,-0.5,-0.5}))
+        rig:set_matrix(rig:index("ttt"), mat4.translate({-0.5,-0.5,-0.5}))
     end
 
     body:set_material(block.material(block_id))

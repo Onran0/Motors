@@ -7,7 +7,7 @@ require "utils/func"
 local Mesh = require "classes/Mesh"
 
 if vc.is_client() then
-    require("util/model_manager").register_models()
+    require("utils/model_manager").register_models()
 end
 
 function on_world_save()
