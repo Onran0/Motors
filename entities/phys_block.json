@@ -1,0 +1,9 @@
+{
+    "components": ["motors:block_logic", "motors:block_visuals"],
+    "skeleton-name": "motors:block",
+    "hitbox": [0.99999, 0.99999, 0.99999],
+    "blocking": true,
+    "solid": true,
+    "body-type": "dynamic",
+    "mass": 100000
+}

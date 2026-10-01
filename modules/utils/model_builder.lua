@@ -74,18 +74,18 @@ local function build_x(hb, texture, pivot)
     return table.concat(lines, "\n")
 end
 
-local module = {}
+local M = {}
 
-function module.build(block)
-    if block["model-name"] then return nil end
-    local model = block.model or "block"
+function M.build(variant)
+    if variant["model-name"] then return nil end
+    local model = variant.model or "block"
     if model == "none" then return "" end
 
-    local texture = block.texture
-    local texture_faces = block["texture-faces"]
+    local texture = variant.texture
+    local texture_faces = variant["texture-faces"]
     if texture and texture_faces then return nil end
 
-    local size = block.size or DEFAULT_SIZE
+    local size = variant.size or DEFAULT_SIZE
 
     if model == "block" then
         local pivot = bbox_center({ { 0, 0, 0, size[1], size[2], size[3] } })
@@ -93,13 +93,13 @@ function module.build(block)
     end
 
     if model == "X" then
-        local hb = block.hitbox or { 0, 0, 0, size[1], size[2], size[3] }
+        local hb = variant.hitbox or { 0, 0, 0, size[1], size[2], size[3] }
         local pivot = bbox_center({ hb })
         return build_x(hb, texture, pivot)
     end
 
     if model == "aabb" then
-        local hitboxes = block.hitboxes or { block.hitbox or { 0, 0, 0, size[1], size[2], size[3] } }
+        local hitboxes = variant.hitboxes or { variant.hitbox or { 0, 0, 0, size[1], size[2], size[3] } }
         local pivot = bbox_center(hitboxes)
         local parts = {}
         for _, hb in ipairs(hitboxes) do
@@ -112,4 +112,4 @@ function module.build(block)
     return nil
 end
 
-return module
+return M

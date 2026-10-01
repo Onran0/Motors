@@ -1,5 +1,5 @@
 {
     "rotation": "pipe",
     "model": "custom",
-    "model-name": "mechanical_piston"
+    "model-name": "mechanical_rotator"
 }

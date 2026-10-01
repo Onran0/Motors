@@ -4,9 +4,6 @@
 local Mesh = {}
 Mesh.__index = Mesh
 
-local sandbox = NEUTRON.sandbox
-local __chunk_size = CHUNK_SIZE
-
 local MESHES = {}
 
 function Mesh.new(id, blocks, origin)
@@ -72,19 +69,6 @@ function Mesh.load()
     end
 end
 
-function Mesh.get_in_view(player)
-    local in_view = {}
-    for id, mesh in pairs(MESHES) do
-        local chunk_x = math.floor(mesh.origin[1] / __chunk_size)
-        local chunk_z = math.floor(mesh.origin[3] / __chunk_size)
-        if sandbox.players.chunk_is_loaded(player, chunk_x, chunk_z) then
-            if not mesh.loaded then mesh:wakeup() end
-            in_view[id] = mesh
-        end
-    end
-    return in_view
-end
-
 function Mesh.get(id)
     return MESHES[id]
 end
@@ -120,6 +104,8 @@ function Mesh:to_serialize()
         if not block.segment_of then
             mesh_tbl.blocks[#mesh_tbl.blocks + 1] = {
                 id = block.id,
+                variant = block.variant,
+                states = block.states,
                 uid = block.entity:get_uid(),
                 base_rot = block.base_rot,
                 local_pos = block.local_pos,
@@ -142,13 +128,15 @@ function Mesh:wakeup()
     for _, block in ipairs(tbl.blocks) do
         local unit_id = UTILS.pos_to_num(block.local_pos)
         local entity = entities.get(block.uid)
-        local logic = entity:require_component("meshup:block_logic")
+        local logic = entity:require_component("motors:block_logic")
 
         local rot = bit.band(logic.get_states() or 0, 7)
         local occupied = UTILS.get_occupied_cells(block.id, rot)
 
         local entry = {
             id = block.id,
+            variant = block.variant,
+            states = block.states,
             entity = entity,
             base_rot = block.base_rot,
             local_pos = block.local_pos,
@@ -169,12 +157,6 @@ function Mesh:wakeup()
 
     self.deferred_data = nil
     self.loaded = true
-end
-
-function Mesh:in_view(player)
-    local chunk_x = math.floor(self.origin[1] / __chunk_size)
-    local chunk_z = math.floor(self.origin[3] / __chunk_size)
-    return sandbox.players.chunk_is_loaded(player, chunk_x, chunk_z)
 end
 
 function Mesh:get_neighbors(pos)
@@ -271,8 +253,9 @@ function Mesh:remove_block(unit_id)
     entry.entity:despawn()
 end
 
-function Mesh:put_block(local_pos, id, states)
+function Mesh:put_block(local_pos, id, variant, states)
     states = states or 0
+    variant = variant or 0
     if self.rotation[1] ~= 0 or self.rotation[2] ~= 0 or self.rotation[3] ~= 0 then
         error("Вращение должно быть нулевое")
     end
@@ -301,26 +284,31 @@ function Mesh:put_block(local_pos, id, states)
         self:remove_block(origin_id)
     end
 
-    local entity = entities.spawn("meshup:phys_block", pos,
+    local entity = entities.spawn("motors:phys_block", pos,
             {
-                meshup__block_logic = {
+                motors__block_logic = {
                     id = id,
                     unit_id = unit_id,
                     mesh_id = self.id,
                     local_pos = local_pos,
                     states = states
                 },
-                meshup__block_visuals = { id = id },
+                motors__block_visuals = {
+                    id = id,
+                    variant = variant
+                },
             }
     )
 
     local entry = {
         id = id,
+        variant = variant,
+        states = states,
         pos = pos,
         entity = entity,
         base_rot = entity.transform:get_rot(),
         local_pos = local_pos,
-        logic = entity:require_component("meshup:block_logic"),
+        logic = entity:require_component("motors:block_logic"),
         occupied = occupied,
         origin_unit_id = unit_id,
     }
