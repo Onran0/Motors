@@ -121,7 +121,6 @@ function Mesh:wakeup()
     if not tbl then return end
 
     if #tbl.blocks > 0 and table.count_pairs(entities.get_all()) == 0 then
-        print(1)
         return
     end
 
@@ -129,8 +128,6 @@ function Mesh:wakeup()
     self.origin = tbl.origin
     self.rotation = tbl.rotation
     self.blocks = {}
-
-    local f = block.name
 
     for _, block in ipairs(tbl.blocks) do
         local unit_id = UTILS.pos_to_num(block.local_pos)
@@ -153,8 +150,6 @@ function Mesh:wakeup()
             occupied = occupied,
             origin_unit_id = unit_id,
         }
-
-        print(f(block.id))
 
         self.blocks[unit_id] = entry
 
@@ -274,7 +269,6 @@ function Mesh:put_block(local_pos, id, variant, states)
     end
 
     if id == -1 or id == 0 then
-        print(id, "такой айди нельзя вставить~")
         return
     end
 
