@@ -1,0 +1,9 @@
+{
+    "skeleton-name": "mechanical_rotator_platform",
+    "components": [
+        "motors:mechanical_rotator_platform"
+    ],
+    "blocking": true,
+    "solid": true,
+    "body-type": "static"
+}

@@ -40,8 +40,6 @@ function M.register_models()
                     local raw_model_name = block.model_name(id):match(":(.-)%.")
                     local model_name = string.format("motors__%s__%s__%d", pack, raw_model_name, i - 1)
 
-                    print(block.name(id), vcm)
-
                     assets.parse_model("vcm", vcm, model_name)
 
                     M.reg_variant(id, i - 1, {

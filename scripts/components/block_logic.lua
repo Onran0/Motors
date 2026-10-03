@@ -6,16 +6,6 @@ local Mesh = require "classes/Mesh"
 local tsf = entity.transform
 local body = entity.rigidbody
 
---[[
-Структура SAVED_DATA
-
-local SAVED_DATA = {
-    block = {
-        id = 0
-    }
-}
-]]
-
 local block_id = ARGS.id
 local block_local_pos = ARGS.local_pos
 
@@ -75,6 +65,12 @@ end
 function on_physics_update()
     local mesh = Mesh.get(mesh_id)
 
+    if not mesh.loaded then
+        if not mesh:wakeup() then
+            return
+        end
+    end
+
     local rot = bit.band(block_states, 7)
     local min_pos, hitbox = unpack(block.get_hitbox(block_id, rot))
     body:set_size(vec3.sub(hitbox, { 0.0001, 0.0001, 0.0001 }))
@@ -88,5 +84,3 @@ function on_physics_update()
     tsf:set_pos(world_pos)
     tsf:set_rot(world_rot)
 end
-
-on_physics_update() -- for remove one-frame mesh lag

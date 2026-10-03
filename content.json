@@ -1,9 +1,10 @@
 {
-  "entities": [
-    "phys_block"
-  ],
-  "items": [],
   "blocks": [
     "mechanical_rotator"
+  ],
+  "items": [],
+  "entities": [
+    "phys_block",
+    "mechanical_rotator_platform"
   ]
 }

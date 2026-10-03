@@ -120,14 +120,23 @@ function Mesh:wakeup()
     local tbl = self.deferred_data
     if not tbl then return end
 
+    if #tbl.blocks > 0 and table.count_pairs(entities.get_all()) == 0 then
+        print(1)
+        return
+    end
+
     self.id = tbl.id
     self.origin = tbl.origin
     self.rotation = tbl.rotation
     self.blocks = {}
 
+    local f = block.name
+
     for _, block in ipairs(tbl.blocks) do
         local unit_id = UTILS.pos_to_num(block.local_pos)
+
         local entity = entities.get(block.uid)
+
         local logic = entity:require_component("motors:block_logic")
 
         local rot = bit.band(logic.get_states() or 0, 7)
@@ -145,6 +154,8 @@ function Mesh:wakeup()
             origin_unit_id = unit_id,
         }
 
+        print(f(block.id))
+
         self.blocks[unit_id] = entry
 
         for _, offset in ipairs(occupied) do
@@ -157,6 +168,8 @@ function Mesh:wakeup()
 
     self.deferred_data = nil
     self.loaded = true
+
+    return true
 end
 
 function Mesh:get_neighbors(pos)
@@ -388,6 +401,11 @@ function Mesh:set_rot(rotation_vector)
             local world_rot = mat4.mul(rotation_matrix, block.base_rot)
 
             block.pos = world_pos
+
+            tsf = block.entity.transform
+
+            tsf:set_pos(world_pos)
+            tsf:set_rot(world_rot)
         end
     end
 end
