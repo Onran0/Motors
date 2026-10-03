@@ -221,8 +221,8 @@ end
 function Mesh:get_world_pos_and_rot(local_pos, base_rot)
     local rotation_matrix = UTILS.vec_to_mat(self.rotation)
 
-    local rotated_pos = mat4.mul(rotation_matrix, local_pos)
-    local world_pos = vec3.add(self.origin, rotated_pos)
+    local rotated_pos = mat4.mul(rotation_matrix, vec3.add(local_pos, { -0.5, 0, -0.5 }))
+    local world_pos = vec3.add(vec3.add(self.origin, { 0.5, 0, 0.5 }), rotated_pos)
 
     base_rot = base_rot or mat4.idt()
     local world_rot = mat4.mul(rotation_matrix, base_rot)
@@ -384,17 +384,12 @@ function Mesh:set_rot(rotation_vector)
     for _, block in pairs(self.blocks) do
         if not block.segment_of then
             local rotated_pos = mat4.mul(rotation_matrix, block.local_pos)
-            local world_pos = vec3.add(self.origin, rotated_pos)
+            local world_pos = vec3.add(vec3.add(self.origin, { 0.5, 0.5, 0.5 }), rotated_pos)
             local world_rot = mat4.mul(rotation_matrix, block.base_rot)
 
             block.pos = world_pos
-
-            local tsf = block.entity.transform
-            tsf:set_pos(world_pos)
-            tsf:set_rot(world_rot)
         end
     end
 end
-
 
 return Mesh

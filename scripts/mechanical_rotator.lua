@@ -3,22 +3,14 @@
 
 local assembler = require "assembler"
 
-local rotY
-local mesh
-
 function on_interact(x, y, z)
     if mesh then
         assembler.disassemble_mesh(mesh)
         mesh = nil
     else
         rotY = 0
-        mesh = assembler.assemble_mesh({ x, y + 1, z }, { x, y + 1, z })
+        mesh = assembler.assemble_mesh({ x, y + 1, z }, { x + 3, y + 2, z }, { x, y, z })
     end
-end
 
-function on_block_tick(x, y, z, tps)
-    if mesh then
-        mesh:set_rot({ 0, rotY, 0 })
-        rotY = rotY + 360/tps
-    end
+    return true
 end

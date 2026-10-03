@@ -2,11 +2,25 @@ local Mesh = require "classes/Mesh"
 
 local M = { }
 
-function M.assemble_mesh(startPos, endPos)
-    local startX, startY, startZ = unpack(startPos)
-    local endX, endY, endZ = unpack(endPos)
+local function vec3_min(a, b)
+    return {
+        math.min(a[1], b[1]),
+        math.min(a[2], b[2]),
+        math.min(a[3], b[3])
+    }
+end
 
-    local origin = vec3.add(vec3.div(vec3.add(startPos, endPos), 2), { 0.5, 0, 0.5 })
+local function vec3_max(a, b)
+    return {
+        math.max(a[1], b[1]),
+        math.max(a[2], b[2]),
+        math.max(a[3], b[3])
+    }
+end
+
+function M.assemble_mesh(a, b, origin)
+    local startX, startY, startZ = unpack(vec3_min(a, b))
+    local endX, endY, endZ = unpack(vec3_max(a, b))
 
     local mesh = Mesh.new(nil, { }, origin)
 
@@ -22,15 +36,9 @@ function M.assemble_mesh(startPos, endPos)
                     local states = block.get_states(x, y, z)
 
                     mesh:put_block(localPos, id, variant, states)
-                end
-            end
-        end
-    end
 
-    for x = startX, endX do
-        for y = startY, endY do
-            for z = startZ, endZ do
-                block.destruct(x, y, z, 0)
+                    block.set(x, y, z, 0, true)
+                end
             end
         end
     end
