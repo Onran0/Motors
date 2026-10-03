@@ -1,7 +1,7 @@
 -- Copyright (C) 2026 Onran
 -- SPDX-License-Identifier: GPL-3.0-only
 
-local Mesh = require "classes/Mesh"
+local Contraption = require "classes/Contraption"
 
 local tsf = entity.transform
 local body = entity.rigidbody
@@ -10,7 +10,7 @@ local block_id = ARGS.id
 local block_local_pos = ARGS.local_pos
 
 local unit_id = ARGS.unit_id
-local mesh_id = ARGS.mesh_id
+local contr_id = ARGS.contr_id
 
 local block_states = ARGS.states
 
@@ -20,7 +20,7 @@ if SAVED_DATA.block then
     block_states = SAVED_DATA.block.states
 
     unit_id = SAVED_DATA.unit_id
-    mesh_id = SAVED_DATA.mesh_id
+    contr_id = SAVED_DATA.contr_id
 end
 
 local rot_profile = block.get_rotation_profile(block_id)
@@ -33,7 +33,7 @@ function on_save()
             states = block_states
         },
         unit_id = unit_id,
-        mesh_id = mesh_id,
+        contr_id = contr_id,
     }
 end
 
@@ -54,8 +54,8 @@ function get_id()
     return block_id
 end
 
-function get_mesh_id()
-    return mesh_id
+function get_contr_id()
+    return contr_id
 end
 
 function get_unit_id()
@@ -63,10 +63,10 @@ function get_unit_id()
 end
 
 function on_physics_update()
-    local mesh = Mesh.get(mesh_id)
+    local contr = Contraption.get(contr_id)
 
-    if not mesh.loaded then
-        if not mesh:wakeup() then
+    if not contr.loaded then
+        if not contr:wakeup() then
             return
         end
     end
@@ -79,7 +79,7 @@ function on_physics_update()
     local local_offset = vec3.add(block_local_pos, center)
     local local_rot = ROTATION_MATRICES[rot_profile][rot]
 
-    local world_pos, world_rot = mesh:get_world_pos_and_rot(local_offset, local_rot)
+    local world_pos, world_rot = contr:get_world_pos_and_rot(local_offset, local_rot)
 
     tsf:set_pos(world_pos)
     tsf:set_rot(world_rot)

@@ -11,7 +11,7 @@ PHYS_BLOCK_ID = entities.def_index(PACK_ID .. ":phys_block")
 GENERATED_MODEL_TYPE = 0
 DEFAULT_MODEL_TYPE = 1
 
-MESHES_SAVING_FILE = pack.data_file(PACK_ID, "data.bjson")
+CONTRAPTIONS_SAVING_FILE = pack.data_file(PACK_ID, "contraptions.bjson")
 
 ROTATION_MATRICES = {}
 ROTATION_MATRICES.pipe = {

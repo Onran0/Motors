@@ -15,7 +15,7 @@
         "platform_entity_uid": {
             "type": "int64"
         },
-        "mesh_uid": {
+        "contraption_uid": {
             "type": "int64"
         }
     }

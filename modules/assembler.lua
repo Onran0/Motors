@@ -1,4 +1,4 @@
-local Mesh = require "classes/Mesh"
+local Contraption = require "classes/Contraption"
 
 local M = { }
 
@@ -18,11 +18,11 @@ local function vec3_max(a, b)
     }
 end
 
-function M.assemble_mesh(a, b, origin)
+function M.assemble_contraption(a, b, origin)
     local startX, startY, startZ = unpack(vec3_min(a, b))
     local endX, endY, endZ = unpack(vec3_max(a, b))
 
-    local mesh = Mesh.new(nil, { }, origin)
+    local mesh = Contraption.new(nil, { }, origin)
 
     for x = startX, endX do
         for y = startY, endY do
@@ -46,7 +46,7 @@ function M.assemble_mesh(a, b, origin)
     return mesh
 end
 
-function M.disassemble_mesh(mesh)
+function M.disassemble_contraption(mesh)
     for _, block_data in pairs(mesh.blocks) do
         local finalPos = vec3.add(block_data.local_pos, mesh.origin)
 
@@ -56,7 +56,7 @@ function M.disassemble_mesh(mesh)
         block.set_variant(x, y, z, block_data.variant)
     end
 
-    Mesh.remove(mesh.id)
+    Contraption.remove(mesh.id)
 end
 
 return M

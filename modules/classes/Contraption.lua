@@ -1,23 +1,23 @@
 -- Copyright (C) 2026 Onran
 -- SPDX-License-Identifier: GPL-3.0-only
 
-local Mesh = {}
-Mesh.__index = Mesh
+local Contraption = {}
+Contraption.__index = Contraption
 
-local MESHES = {}
+local CONTRAPTIONS = {}
 
-function Mesh.new(id, blocks, origin)
-    local self = setmetatable({}, Mesh)
+function Contraption.new(id, blocks, origin)
+    local self = setmetatable({}, Contraption)
 
     if not id then
-        for i = 0, table.count_pairs(MESHES) + 1 do
-            if not MESHES[i] then
+        for i = 0, table.count_pairs(CONTRAPTIONS) + 1 do
+            if not CONTRAPTIONS[i] then
                 id = i
                 break
             end
         end
         if not id then
-            for a, b in pairs(MESHES) do
+            for a, b in pairs(CONTRAPTIONS) do
                 print(a, b)
             end
             error("айди меша равен nil, хз почему")
@@ -37,53 +37,53 @@ function Mesh.new(id, blocks, origin)
         self:put_block(block.pos)
     end
 
-    MESHES[id] = self
+    CONTRAPTIONS[id] = self
 
     return self
 end
 
-function Mesh.save()
+function Contraption.save()
     local save_tbl = {}
-    for _, mesh in pairs(MESHES) do
-        save_tbl[#save_tbl+1] = mesh:to_serialize()
+    for _, contr in pairs(CONTRAPTIONS) do
+        save_tbl[#save_tbl+1] = contr:to_serialize()
     end
 
     local bytes = bjson.tobytes(
-            {meshes = save_tbl},
+            {contrs = save_tbl},
             true)
-    file.write_bytes(MESHES_SAVING_FILE, bytes)
+    file.write_bytes(CONTRAPTIONS_SAVING_FILE, bytes)
 end
 
-function Mesh.load()
-    if not file.exists(MESHES_SAVING_FILE) then
+function Contraption.load()
+    if not file.exists(CONTRAPTIONS_SAVING_FILE) then
         return
     end
 
-    local bytes = file.read_bytes(MESHES_SAVING_FILE)
-    local save_tbl = bjson.frombytes(bytes).meshes
+    local bytes = file.read_bytes(CONTRAPTIONS_SAVING_FILE)
+    local save_tbl = bjson.frombytes(bytes).contrs
 
-    for _, mesh_info in pairs(save_tbl) do
-        local mesh = Mesh.new(mesh_info.id, {}, mesh_info.origin)
-        mesh.loaded = false
-        mesh.deferred_data = mesh_info
+    for _, contr_info in pairs(save_tbl) do
+        local contr = Contraption.new(contr_info.id, {}, contr_info.origin)
+        contr.loaded = false
+        contr.deferred_data = contr_info
     end
 end
 
-function Mesh.get(id)
-    return MESHES[id]
+function Contraption.get(id)
+    return CONTRAPTIONS[id]
 end
 
-function Mesh.remove(id)
-    local mesh = MESHES[id]
-    mesh.active = false
-    MESHES[id] = nil
+function Contraption.remove(id)
+    local contr = CONTRAPTIONS[id]
+    contr.active = false
+    CONTRAPTIONS[id] = nil
 
-    for _, block in pairs(mesh.blocks) do
+    for _, block in pairs(contr.blocks) do
         block.entity:despawn()
     end
 end
 
-function Mesh:get_block_entry(unit_id)
+function Contraption:get_block_entry(unit_id)
     local b = self.blocks[unit_id]
     if not b then return nil end
     if b.segment_of then
@@ -92,8 +92,8 @@ function Mesh:get_block_entry(unit_id)
     return b
 end
 
-function Mesh:to_serialize()
-    local mesh_tbl = {
+function Contraption:to_serialize()
+    local contr_tbl = {
         id = self.id,
         origin = self.origin,
         rotation = self.rotation,
@@ -102,7 +102,7 @@ function Mesh:to_serialize()
 
     for _, block in pairs(self.blocks) do
         if not block.segment_of then
-            mesh_tbl.blocks[#mesh_tbl.blocks + 1] = {
+            contr_tbl.blocks[#contr_tbl.blocks + 1] = {
                 id = block.id,
                 variant = block.variant,
                 states = block.states,
@@ -113,10 +113,10 @@ function Mesh:to_serialize()
         end
     end
 
-    return mesh_tbl
+    return contr_tbl
 end
 
-function Mesh:wakeup()
+function Contraption:wakeup()
     local tbl = self.deferred_data
     if not tbl then return end
 
@@ -167,7 +167,7 @@ function Mesh:wakeup()
     return true
 end
 
-function Mesh:get_neighbors(pos)
+function Contraption:get_neighbors(pos)
     local neighbors = {}
 
     local neighbor_offsets = {
@@ -195,7 +195,7 @@ function Mesh:get_neighbors(pos)
     return neighbors
 end
 
-function Mesh:change_origin(pos)
+function Contraption:change_origin(pos)
     self.origin = pos
 
     for _, block in pairs(self.blocks) do
@@ -203,7 +203,7 @@ function Mesh:change_origin(pos)
     end
 end
 
-function Mesh:get_unrotated_local_pos(block_world_pos)
+function Contraption:get_unrotated_local_pos(block_world_pos)
     local current_rel_pos = vec3.sub(block_world_pos, self.origin)
 
     local rot_vec = self.rotation
@@ -219,14 +219,14 @@ function Mesh:get_unrotated_local_pos(block_world_pos)
     }
 end
 
-function Mesh:on_update(pos)
+function Contraption:on_update(pos)
     local neighbors = self:get_neighbors(pos)
     for _, neighbour in ipairs(neighbors) do
         neighbour.logic.on_update()
     end
 end
 
-function Mesh:get_world_pos_and_rot(local_pos, base_rot)
+function Contraption:get_world_pos_and_rot(local_pos, base_rot)
     local rotation_matrix = UTILS.vec_to_mat(self.rotation)
 
     local rotated_pos = mat4.mul(rotation_matrix, vec3.add(local_pos, { -0.5, 0, -0.5 }))
@@ -238,14 +238,14 @@ function Mesh:get_world_pos_and_rot(local_pos, base_rot)
     return world_pos, world_rot
 end
 
-function Mesh:update_block(unit_id, states)
+function Contraption:update_block(unit_id, states)
     local entry = self:get_block_entry(unit_id)
     if entry then
         entry.logic.set_states(states)
     end
 end
 
-function Mesh:remove_block(unit_id)
+function Contraption:remove_block(unit_id)
     local entry = self:get_block_entry(unit_id)
     if not entry then return end
 
@@ -261,7 +261,7 @@ function Mesh:remove_block(unit_id)
     entry.entity:despawn()
 end
 
-function Mesh:put_block(local_pos, id, variant, states)
+function Contraption:put_block(local_pos, id, variant, states)
     states = states or 0
     variant = variant or 0
     if self.rotation[1] ~= 0 or self.rotation[2] ~= 0 or self.rotation[3] ~= 0 then
@@ -296,7 +296,7 @@ function Mesh:put_block(local_pos, id, variant, states)
                 motors__block_logic = {
                     id = id,
                     unit_id = unit_id,
-                    mesh_id = self.id,
+                    contr_id = self.id,
                     local_pos = local_pos,
                     states = states
                 },
@@ -339,12 +339,12 @@ function Mesh:put_block(local_pos, id, variant, states)
     return entity
 end
 
-function Mesh:__get_relative_pos(entity, pos)
+function Contraption:__get_relative_pos(entity, pos)
     pos = pos or self.origin
     return vec3.sub(pos, entity.transform:get_pos())
 end
 
-function Mesh:__get_blocks_data()
+function Contraption:__get_blocks_data()
     local data = {}
     for _, block in pairs(self.blocks) do
         data[#data + 1] = { id = block.id, pos = block.pos }
@@ -352,7 +352,7 @@ function Mesh:__get_blocks_data()
     return data
 end
 
-function Mesh:set_pos(pos)
+function Contraption:set_pos(pos)
     self.origin = pos
     local rotation_matrix = UTILS.vec_to_mat(self.rotation)
 
@@ -366,12 +366,12 @@ function Mesh:set_pos(pos)
     end
 end
 
-function Mesh:move(move)
+function Contraption:move(move)
     local pos = vec3.add(self.origin, move)
     self:set_pos(pos)
 end
 
-function Mesh:get_states()
+function Contraption:get_states()
     local blocks = self.blocks
     local states = {}
 
@@ -384,7 +384,7 @@ function Mesh:get_states()
     return states
 end
 
-function Mesh:set_rot(rotation_vector)
+function Contraption:set_rot(rotation_vector)
     self.rotation = rotation_vector
     local rotation_matrix = UTILS.vec_to_mat(rotation_vector)
 
@@ -404,4 +404,4 @@ function Mesh:set_rot(rotation_vector)
     end
 end
 
-return Mesh
+return Contraption

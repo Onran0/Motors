@@ -4,14 +4,14 @@
 require "globals"
 require "utils/func"
 
-local Mesh = require "classes/Mesh"
+local Contraption = require "classes/Contraption"
 
 function on_world_save()
-    Mesh.save()
+    Contraption.save()
 end
 
 function on_world_open()
-    Mesh.load()
+    Contraption.load()
 
     if vc.is_client() then
         require("utils/model_manager").register_models()
