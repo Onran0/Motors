@@ -1,0 +1,6 @@
+{
+    "components": [ "motors:glue_area" ],
+    "blocking": false,
+    "selectable": false,
+    "body-type": "static"
+}

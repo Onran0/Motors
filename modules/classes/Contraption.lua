@@ -6,7 +6,7 @@ Contraption.__index = Contraption
 
 local CONTRAPTIONS = {}
 
-function Contraption.new(id, blocks, origin)
+function Contraption.new(origin, glue_areas, id)
     local self = setmetatable({}, Contraption)
 
     if not id then
@@ -26,16 +26,13 @@ function Contraption.new(id, blocks, origin)
 
     self.id = id
     self.blocks = {}
+    self.glue_areas = glue_areas or {}
     self.origin = origin
     self.rotation = { 0, 0, 0 }
     self.active = true
 
     self.loaded = true
     self.deferred_data = nil
-
-    for _, block in ipairs(blocks or {}) do
-        self:put_block(block.pos)
-    end
 
     CONTRAPTIONS[id] = self
 
@@ -63,7 +60,7 @@ function Contraption.load()
     local save_tbl = bjson.frombytes(bytes).contrs
 
     for _, contr_info in pairs(save_tbl) do
-        local contr = Contraption.new(contr_info.id, {}, contr_info.origin)
+        local contr = Contraption.new(contr_info.origin, contr_info.glue_areas, contr_info.id)
         contr.loaded = false
         contr.deferred_data = contr_info
     end
@@ -97,6 +94,7 @@ function Contraption:to_serialize()
         id = self.id,
         origin = self.origin,
         rotation = self.rotation,
+        glue_areas = self.glue_areas,
         blocks = {}
     }
 

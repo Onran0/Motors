@@ -12,6 +12,7 @@ GENERATED_MODEL_TYPE = 0
 DEFAULT_MODEL_TYPE = 1
 
 CONTRAPTIONS_SAVING_FILE = pack.data_file(PACK_ID, "contraptions.bjson")
+GLUE_AREAS_SAVING_FILE = pack.data_file(PACK_ID, "glue_areas.bjson")
 
 ROTATION_MATRICES = {}
 ROTATION_MATRICES.pipe = {

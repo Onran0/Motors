@@ -1,46 +1,34 @@
+local glue_manager = require "glue/glue_manager"
 local Contraption = require "classes/Contraption"
 
 local M = { }
 
-local function vec3_min(a, b)
-    return {
-        math.min(a[1], b[1]),
-        math.min(a[2], b[2]),
-        math.min(a[3], b[3])
-    }
+local function add_block(mesh, origin, x, y, z)
+    local id = block.get(x, y, z)
+
+    if id ~= 0 and id ~= -1 then
+        local localPos = vec3.sub({ x, y, z }, origin)
+
+        local variant = block.get_variant(x, y, z)
+        local states = block.get_states(x, y, z)
+
+        mesh:put_block(localPos, id, variant, states)
+
+        block.set(x, y, z, 0, true)
+    end
 end
 
-local function vec3_max(a, b)
-    return {
-        math.max(a[1], b[1]),
-        math.max(a[2], b[2]),
-        math.max(a[3], b[3])
-    }
-end
+function M.assemble_contraption(pos, origin)
+    local mesh = Contraption.new(origin)
 
-function M.assemble_contraption(a, b, origin)
-    local startX, startY, startZ = unpack(vec3_min(a, b))
-    local endX, endY, endZ = unpack(vec3_max(a, b))
+    local glued_blocks = glue_manager.get_glued_blocks(unpack(pos))
 
-    local mesh = Contraption.new(nil, { }, origin)
-
-    for x = startX, endX do
-        for y = startY, endY do
-            for z = startZ, endZ do
-                local id = block.get(x, y, z)
-
-                if id ~= 0 and id ~= -1 then
-                    local localPos = vec3.sub({ x, y, z }, origin)
-
-                    local variant = block.get_variant(x, y, z)
-                    local states = block.get_states(x, y, z)
-
-                    mesh:put_block(localPos, id, variant, states)
-
-                    block.set(x, y, z, 0, true)
-                end
-            end
+    if #glued_blocks > 0 then
+        for _, glued_pos in ipairs(glued_blocks) do
+            add_block(mesh, origin, unpack(glued_pos))
         end
+    else
+        add_block(mesh, origin, unpack(pos))
     end
 
     return mesh

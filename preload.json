@@ -1,5 +1,9 @@
 {
     "models": [
         "mechanical_rotator_platform"
+    ],
+    "textures": [
+        "glue_area",
+        "glue_particles"
     ]
 }

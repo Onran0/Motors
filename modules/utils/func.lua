@@ -110,6 +110,30 @@ function UTILS.vec3_chunk(vec)
     return x, z
 end
 
+function UTILS.vec3_min(a, b)
+    return {
+        math.min(a[1], b[1]),
+        math.min(a[2], b[2]),
+        math.min(a[3], b[3])
+    }
+end
+
+function UTILS.vec3_max(a, b)
+    return {
+        math.max(a[1], b[1]),
+        math.max(a[2], b[2]),
+        math.max(a[3], b[3])
+    }
+end
+
+function UTILS.is_inside_area(x, y, z, min, max)
+    return (
+            x >= min[1] and y >= min[2] and z >= min[3]
+    ) and (
+            x <= max[1] and y <= max[2] and z <= max[3]
+    )
+end
+
 function UTILS.get_occupied_cells(id, rotation_index)
     local min_pos, size = unpack(block.get_hitbox(id, rotation_index))
     local x0, y0, z0 = math.floor(min_pos[1]), math.floor(min_pos[2]), math.floor(min_pos[3])

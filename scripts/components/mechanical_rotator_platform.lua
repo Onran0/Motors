@@ -48,5 +48,5 @@ function on_render(delta)
     contr:set_rot(vec3.mul(axis, angle))
     tsf:set_rot(mat4.mul(mat4.rotate(axis, angle), rotation_matrix))
 
-    angle = angle + 180 * 2 * delta
+    angle = angle + 22.5 * 2 * delta
 end

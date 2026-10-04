@@ -1,0 +1,24 @@
+-- Copyright (C) 2026 Onran
+-- SPDX-License-Identifier: GPL-3.0-only
+
+local glue_manager = require "glue/glue_manager"
+
+local first_pos
+
+function on_use()
+    if SELECTED_GLUE_AREA then
+        glue_manager.delete_area_by_entity(SELECTED_GLUE_AREA)
+
+        first_pos = nil
+    end
+end
+
+function on_use_on_block(x, y, z)
+    if not first_pos then
+        first_pos = { x, y, z }
+    else
+        glue_manager.add_area(first_pos, { x, y, z })
+
+        first_pos = nil
+    end
+end

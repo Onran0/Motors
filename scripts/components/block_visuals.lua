@@ -6,7 +6,7 @@ if not vc.is_client() then return end
 local body = entity.rigidbody
 local rig = entity.skeleton
 
-local model_manager = require "utils/model_manager"
+local model_manager = require "utils/block_visuals_manager"
 
 local block_id = ARGS.id
 local block_variant = ARGS.variant

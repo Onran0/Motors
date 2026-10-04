@@ -1,6 +1,8 @@
 -- Copyright (C) 2026 Onran
 -- SPDX-License-Identifier: GPL-3.0-only
 
+local model_builder = require "utils/block_model_builder"
+
 local M = {}
 
 local models = {}
@@ -18,8 +20,6 @@ function M.get_model(block_id, variant)
 end
 
 function M.register_models()
-    local model_builder = require "utils/model_builder"
-
     for id = 0, block.defs_count() - 1 do
         local pack, block_name = parse_path(block.name(id))
         local path = string.format("%s:blocks/%s.json", pack, block_name)
