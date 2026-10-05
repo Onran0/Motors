@@ -13,8 +13,6 @@ local function add_block(mesh, origin, x, y, z)
         local states = block.get_states(x, y, z)
 
         mesh:put_block(localPos, id, variant, states)
-
-        block.set(x, y, z, 0, true)
     end
 end
 
@@ -27,6 +25,10 @@ function M.assemble_contraption(pos, origin)
         if #glued_blocks > 0 then
             for _, glued_pos in ipairs(glued_blocks) do
                 add_block(mesh, origin, unpack(glued_pos))
+            end
+
+            for _, glued_pos in ipairs(glued_blocks) do
+                block.set(glued_pos[1], glued_pos[2], glued_pos[3], 0, true)
             end
         else
             add_block(mesh, origin, unpack(pos))
