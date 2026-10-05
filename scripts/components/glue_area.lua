@@ -4,7 +4,7 @@
 local glue_manager = require "glue/glue_manager"
 local glue_area_model_builder = require "glue/glue_area_model_builder"
 
-local EDGES_AIM_OFF_COLOR = { 0.75, 0.75, 0.75, 1.0 }
+local EDGES_AIM_OFF_COLOR = { 1.0, 1.0, 1.0, 1/4 }
 local EDGES_AIM_ON_COLOR = { 1.0, 1.0, 1.0, 1.0 }
 
 local tsf = entity.transform
@@ -80,6 +80,5 @@ function on_render(delta)
         change_edges_color(EDGES_AIM_OFF_COLOR)
     end
 
-    rig:set_visible(rig:index("edges"), SHOW_GLUE_AREAS)
-    rig:set_visible(rig:index("glue_blocks"), SHOW_GLUE_AREAS)
+    rig:set_visible(SHOW_GLUE_AREAS)
 end

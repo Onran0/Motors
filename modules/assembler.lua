@@ -21,14 +21,16 @@ end
 function M.assemble_contraption(pos, origin)
     local mesh = Contraption.new(origin)
 
-    local glued_blocks = glue_manager.get_glued_blocks(unpack(pos))
+    if block.get(unpack(pos)) ~= 0 then
+        local glued_blocks = glue_manager.get_glued_blocks(unpack(pos))
 
-    if #glued_blocks > 0 then
-        for _, glued_pos in ipairs(glued_blocks) do
-            add_block(mesh, origin, unpack(glued_pos))
+        if #glued_blocks > 0 then
+            for _, glued_pos in ipairs(glued_blocks) do
+                add_block(mesh, origin, unpack(glued_pos))
+            end
+        else
+            add_block(mesh, origin, unpack(pos))
         end
-    else
-        add_block(mesh, origin, unpack(pos))
     end
 
     return mesh

@@ -36,13 +36,13 @@ end
 
 local function spawn_glue_particles(pos)
     gfx.particles.emit(
-            pos, 8,
+            vec3.add(pos, { 0.5, 0, 0.5 }), 16,
             {
                 texture = "glue_particles",
                 lifetime = 1.5,
-                spawn_spread = { 1, 0, 1 },
+                spawn_spread = { 0.5, 0, 0.5 },
                 angle_spread = 0.5,
-                spawn_interval = 0.05,
+                spawn_interval = 0,
                 spawn_shape = "sphere"
             }
     )

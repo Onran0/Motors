@@ -5,12 +5,17 @@ local glue_manager = require "glue/glue_manager"
 
 local first_pos
 
-function on_use()
+-- calling from hud.lua
+function do_glue_break()
     if SELECTED_GLUE_AREA then
         glue_manager.delete_area_by_entity(SELECTED_GLUE_AREA)
 
         first_pos = nil
     end
+end
+
+function on_block_break_by()
+    return true
 end
 
 function on_use_on_block(x, y, z)
