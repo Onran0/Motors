@@ -37,7 +37,7 @@ function M.register_models()
                 local vcm = model_builder.build(variants[i])
 
                 if vcm then
-                    local raw_model_name = block.model_name(id):match(":(.-)%.")
+                    local raw_model_name = block.model_name(id, i - 1):match(":(.-)%.")
                     local model_name = string.format("motors__%s__%s__%d", pack, raw_model_name, i - 1)
 
                     assets.parse_model("vcm", vcm, model_name)
@@ -48,7 +48,7 @@ function M.register_models()
                     })
                 else
                     M.reg_variant(id, i - 1, {
-                        name = block.model_name(id),
+                        name = block.model_name(id, i - 1),
                         type = DEFAULT_MODEL_TYPE
                     })
                 end
