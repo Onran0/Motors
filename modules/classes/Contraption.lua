@@ -118,19 +118,20 @@ function Contraption:wakeup()
     local tbl = self.deferred_data
     if not tbl then return end
 
-    if #tbl.blocks > 0 and table.count_pairs(entities.get_all()) == 0 then
+    if table.count_pairs(entities.get_all()) < #tbl.blocks then
         return
     end
 
-    self.id = tbl.id
-    self.origin = tbl.origin
-    self.rotation = tbl.rotation
-    self.blocks = {}
+    local blocks = { }
 
     for _, block in ipairs(tbl.blocks) do
         local unit_id = UTILS.pos_to_num(block.local_pos)
 
         local entity = entities.get(block.uid)
+
+        if not entity then
+            return
+        end
 
         local logic = entity:require_component("motors:block_logic")
 
@@ -149,15 +150,20 @@ function Contraption:wakeup()
             origin_unit_id = unit_id,
         }
 
-        self.blocks[unit_id] = entry
+        blocks[unit_id] = entry
 
         for _, offset in ipairs(occupied) do
             if offset[1] ~= 0 or offset[2] ~= 0 or offset[3] ~= 0 then
                 local cell_pos = vec3.add(block.local_pos, offset)
-                self.blocks[UTILS.pos_to_num(cell_pos)] = { segment_of = unit_id }
+                blocks[UTILS.pos_to_num(cell_pos)] = { segment_of = unit_id }
             end
         end
     end
+
+    self.id = tbl.id
+    self.origin = tbl.origin
+    self.rotation = tbl.rotation
+    self.blocks = blocks
 
     self.deferred_data = nil
     self.loaded = true

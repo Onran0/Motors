@@ -5,5 +5,8 @@
     "textures": [
         "glue_area",
         "glue_particles"
+    ],
+    "sounds": [
+        "glue"
     ]
 }

@@ -6,12 +6,14 @@ local glue_area_model_builder = require "glue/glue_area_model_builder"
 
 local EDGES_AIM_OFF_COLOR = { 1.0, 1.0, 1.0, 1/4 }
 local EDGES_AIM_ON_COLOR = { 1.0, 1.0, 1.0, 1.0 }
+local EDGES_DESTROY_COLOR = { 1.0, 1.0, 1.0, 0.0 }
 
 local tsf = entity.transform
 local body = entity.rigidbody
 local rig = entity.skeleton
 
 need_model_update = true
+destroying = false
 
 local prev_target_edges_color = EDGES_AIM_OFF_COLOR
 local target_edges_color = prev_target_edges_color
@@ -60,6 +62,18 @@ function on_render(delta)
         need_model_update = false
     end
 
+    rig:set_visible(SHOW_GLUE_AREAS)
+
+    if not destroying then
+        if SELECTED_GLUE_AREA == entity then
+            change_edges_color(EDGES_AIM_ON_COLOR)
+        else
+            change_edges_color(EDGES_AIM_OFF_COLOR)
+        end
+    else
+        change_edges_color(EDGES_DESTROY_COLOR)
+    end
+
     if edges_color_interp_factor < 1.0 then
         edges_color_interp_factor = math.min(
                 1.0,
@@ -72,13 +86,8 @@ function on_render(delta)
                         edges_color_interp_factor
                 )
         )
+    elseif destroying then
+        glue_manager.__on_entity_despawn(entity:get_uid())
+        entity:despawn()
     end
-
-    if SELECTED_GLUE_AREA == entity then
-        change_edges_color(EDGES_AIM_ON_COLOR)
-    else
-        change_edges_color(EDGES_AIM_OFF_COLOR)
-    end
-
-    rig:set_visible(SHOW_GLUE_AREAS)
 end

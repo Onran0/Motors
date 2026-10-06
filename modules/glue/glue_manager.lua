@@ -104,17 +104,26 @@ function M.add_area(posA, posB)
 end
 
 function M.delete_area_by_uid(uid)
+    local comp = GLUE_AREAS[uid].entity:get_component("motors:glue_area")
+
+    if comp.destroying then
+        return false
+    else
+        comp.destroying = true
+        return true
+    end
+end
+
+function M.delete_area_by_entity(entity)
+    return M.delete_area_by_uid(entity:get_uid())
+end
+
+function M.__on_entity_despawn(uid)
     local area = GLUE_AREAS[uid]
 
     GLUE_AREAS[area.entity:get_uid()] = nil
 
-    area.entity:despawn()
-
     GLUE_AREAS[uid] = nil
-end
-
-function M.delete_area_by_entity(entity)
-    M.delete_area_by_uid(entity:get_uid())
 end
 
 function M.get_area_by_uid(uid)

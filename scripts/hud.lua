@@ -27,12 +27,15 @@ function on_hud_render()
 
         local areas = glue_manager.get_glue_areas_at(math.floor(ex), math.floor(ey), math.floor(ez))
 
+        GLUE_AREA_RAYCAST_ENDPOINT = out.endpoint
+
         if #areas > 0 then
             SELECTED_GLUE_AREA = areas[1].entity
         else
             SELECTED_GLUE_AREA = entities.get(out.entity)
         end
     else
+        GLUE_AREA_RAYCAST_ENDPOINT = nil
         SELECTED_GLUE_AREA = nil
     end
 end

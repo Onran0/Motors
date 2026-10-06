@@ -32,6 +32,7 @@ function M.assemble_contraption(pos, origin)
             end
         else
             add_block(mesh, origin, unpack(pos))
+            block.set(pos[1], pos[2], pos[3], 0, true)
         end
     end
 
