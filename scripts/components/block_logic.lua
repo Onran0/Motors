@@ -62,7 +62,7 @@ function get_unit_id()
     return unit_id
 end
 
-function on_physics_update()
+function update_transform()
     local contr = Contraption.get(contr_id)
 
     if not contr.loaded then
@@ -85,4 +85,4 @@ function on_physics_update()
     tsf:set_rot(world_rot)
 end
 
-on_physics_update()
+update_transform()

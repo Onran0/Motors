@@ -10,10 +10,19 @@ local DISASSEMBLE_DURATION_SEC = 1.0
 local MIN_ANGLE_DIFF_TO_DISASSEMBLE = 0.25
 
 angle = 0
+signal = 0
 
 local disassembling = false
 local disassemble_angle = 0
 local disassemble_progress = 0
+
+local min_angle_speed
+local max_angle_speed
+
+local min_angle_limit
+local max_angle_limit
+
+local has_angle_limit
 
 local contr
 local block_pos
@@ -26,14 +35,33 @@ if SAVED_DATA.contr then
     contr = SAVED_DATA.contr
     block_pos = SAVED_DATA.block_pos
     axis = SAVED_DATA.axis
+
     angle = SAVED_DATA.angle
+
     disassembling = SAVED_DATA.disassembling
     disassemble_angle = SAVED_DATA.disassembling_angle
     disassemble_progress = SAVED_DATA.disassemble_progress
+
+    min_angle_speed = SAVED_DATA.min_angle_speed
+    max_angle_limit = SAVED_DATA.max_angle_limit
+
+    has_angle_limit = SAVED_DATA.has_angle_limit
+
+    min_angle_limit = SAVED_DATA.min_angle_limit
+    max_angle_limit = SAVED_DATA.max_angle_limit
 else
     contr = ARGS.contr
     block_pos = ARGS.block_pos
     axis = ARGS.axis
+
+    min_angle_speed = ARGS.min_angle_speed
+    max_angle_limit = ARGS.max_angle_limit
+
+    has_angle_limit = ARGS.has_angle_limit
+
+    min_angle_limit = ARGS.min_angle_limit
+    max_angle_limit = ARGS.max_angle_limit
+
     angle = 0
 end
 
@@ -49,7 +77,15 @@ function on_save()
         angle = angle,
         disassembling = disassembling,
         disassemble_angle = disassemble_angle,
-        disassemble_progress = disassemble_progress
+        disassemble_progress = disassemble_progress,
+
+        min_angle_speed = min_angle_speed,
+        max_angle_speed = max_angle_speed,
+
+        has_angle_limit = has_angle_limit,
+
+        min_angle_limit = min_angle_limit,
+        max_angle_limit = max_angle_limit,
     }
 end
 

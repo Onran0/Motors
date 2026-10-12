@@ -364,8 +364,10 @@ function Contraption:set_pos(pos)
         if not block.segment_of then
             local rotated_pos = mat4.mul(rotation_matrix, block.local_pos)
             local new_pos = vec3.add(self.origin, rotated_pos)
+
             block.pos = new_pos
-            block.entity.transform:set_pos(new_pos)
+
+            block.logic:update_transform()
         end
     end
 end
@@ -396,14 +398,10 @@ function Contraption:set_rot(rotation_vector)
         if not block.segment_of then
             local rotated_pos = mat4.mul(rotation_matrix, block.local_pos)
             local world_pos = vec3.add(vec3.add(self.origin, { 0.5, 0.5, 0.5 }), rotated_pos)
-            local world_rot = mat4.mul(rotation_matrix, block.base_rot)
 
             block.pos = world_pos
 
-            tsf = block.entity.transform
-
-            tsf:set_pos(world_pos)
-            tsf:set_rot(world_rot)
+            block.logic:update_transform()
         end
     end
 end
