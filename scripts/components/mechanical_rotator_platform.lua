@@ -6,17 +6,29 @@ local Contraption = require "classes/Contraption"
 
 local tsf = entity.transform
 
+local DISASSEMBLE_DURATION_SEC = 1.0
+
 angle = 0
+
+local disassembling = false
+local disassemble_angle = 0
+local disassemble_progress = 0
 
 local contr
 local block_pos
 local axis
+
+-- TODO: instead of defined disassemble use closest 90-multiple angle to current angle
+local src_angle = 0
 
 if SAVED_DATA.contr then
     contr = SAVED_DATA.contr
     block_pos = SAVED_DATA.block_pos
     axis = SAVED_DATA.axis
     angle = SAVED_DATA.angle
+    disassembling = SAVED_DATA.disassembling
+    disassemble_angle = SAVED_DATA.disassembling_angle
+    disassemble_progress = SAVED_DATA.disassemble_progress
 else
     contr = ARGS.contr
     block_pos = ARGS.block_pos
@@ -33,8 +45,20 @@ function on_save()
         contr = contr.id,
         block_pos = block_pos,
         axis = axis,
-        angle = angle
+        angle = angle,
+        disassembling = disassembling,
+        disassemble_angle = disassemble_angle,
+        disassemble_progress = disassemble_progress
     }
+end
+
+function disassemble()
+    if not disassembling then
+        disassembling = true
+        disassemble_angle = src_angle
+        disassemble_progress = 0
+        angle = angle % 360
+    end
 end
 
 function on_physics_update()
@@ -45,8 +69,27 @@ function on_physics_update()
 end
 
 function on_render(delta)
+    if disassembling then
+        if angle == disassemble_angle then
+            local bx, by, bz = unpack(block_pos)
+
+            block.set_variant(bx, by, bz, 0)
+            block.set_field(bx, by, bz, "is_assembled", 0)
+
+            assembler.disassemble_contraption(contr)
+
+            entity:despawn()
+
+            return
+        end
+
+        disassemble_progress = math.min(disassemble_progress + delta / DISASSEMBLE_DURATION_SEC, 1.0)
+
+        angle = UTILS.lerp_angle(angle, disassemble_angle, disassemble_progress)
+    else
+        angle = angle + 45 * delta
+    end
+
     contr:set_rot(vec3.mul(axis, angle))
     tsf:set_rot(mat4.mul(mat4.rotate(axis, angle), rotation_matrix))
-
-    angle = angle + 45 * delta
 end

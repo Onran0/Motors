@@ -151,3 +151,19 @@ function UTILS.get_occupied_cells(id, rotation_index)
     end
     return cells
 end
+
+function UTILS.lerp(a, b, t)
+    return a + (b - a) * t
+end
+
+function UTILS.lerp_angle(a, b, t)
+    return UTILS.lerp(
+            UTILS.angle_to_180_format(a),
+            UTILS.angle_to_180_format(b),
+            t
+    ) % 360
+end
+
+function UTILS.angle_to_180_format(angle)
+    return (angle + 180) % 360 - 180
+end

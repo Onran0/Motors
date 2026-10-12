@@ -1,22 +1,15 @@
 -- Copyright (C) 2026 Onran
 -- SPDX-License-Identifier: GPL-3.0-only
 
-local Contraption = require "classes/Contraption"
-
 local assembler = require "assembler"
 
 function on_interact(x, y, z)
     local axis = { block.get_Y(x, y, z) }
 
     if block.get_field(x, y, z, "is_assembled") == 1 then
-        block.set_variant(x, y, z, 0)
-        block.set_field(x, y, z, "is_assembled", 0)
-
-        entities.get(block.get_field(x, y, z, "platform_entity_uid")):despawn()
-
-        local contr = Contraption.get(block.get_field(x, y, z, "contraption_uid"))
-
-        assembler.disassemble_contraption(contr)
+        entities.get(
+                block.get_field(x, y, z, "platform_entity_uid")
+        ):get_component("motors:mechanical_rotator_platform"):disassemble()
     else
         block.set_variant(x, y, z, 1)
         block.set_field(x, y, z, "is_assembled", 1)
