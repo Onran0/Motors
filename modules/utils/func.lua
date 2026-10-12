@@ -164,6 +164,14 @@ function UTILS.lerp_angle(a, b, t)
     ) % 360
 end
 
+function UTILS.angles_diff(a, b)
+    return (b - a + 180) % 360 - 180
+end
+
+function UTILS.angles_dist(a, b)
+    return math.abs(UTILS.angles_diff(a, b))
+end
+
 function UTILS.angle_to_180_format(angle)
     return (angle + 180) % 360 - 180
 end

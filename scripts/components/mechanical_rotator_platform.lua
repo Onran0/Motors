@@ -7,6 +7,7 @@ local Contraption = require "classes/Contraption"
 local tsf = entity.transform
 
 local DISASSEMBLE_DURATION_SEC = 1.0
+local MIN_ANGLE_DIFF_TO_DISASSEMBLE = 0.25
 
 angle = 0
 
@@ -70,7 +71,7 @@ end
 
 function on_render(delta)
     if disassembling then
-        if angle == disassemble_angle then
+        if UTILS.angles_dist(angle, disassemble_angle) <= MIN_ANGLE_DIFF_TO_DISASSEMBLE then
             local bx, by, bz = unpack(block_pos)
 
             block.set_variant(bx, by, bz, 0)
