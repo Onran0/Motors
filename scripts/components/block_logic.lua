@@ -84,3 +84,5 @@ function on_physics_update()
     tsf:set_pos(world_pos)
     tsf:set_rot(world_rot)
 end
+
+on_physics_update()
