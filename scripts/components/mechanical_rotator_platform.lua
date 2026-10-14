@@ -62,10 +62,10 @@ function update_angle(delta)
     end
 
     if data.mode == MECH_ROTATOR_MODE_ROTATION then
-        angle = (angle + UTILS.lerp(data.min_speed, data.max_speed, final_normalized_signal) * delta) % 360
+        angle = angle + UTILS.lerp(data.min_speed, data.max_speed, final_normalized_signal) * delta
 
         if data.min_angle then
-            angle = math.clamp(angle, data.min_angle, data.max_angle)
+            angle = UTILS.clamp_angle(UTILS.angle_to_180_format(angle % 360), data.min_angle, data.max_angle)
         end
     elseif data.mode == MECH_ROTATOR_MODE_ANGLE then
         angle = UTILS.lerp(data.min_angle, data.max_angle, final_normalized_signal)

@@ -179,3 +179,22 @@ end
 function UTILS.rpm_to_degrees_per_sec(rpm)
     return rpm / 60 * 360
 end
+
+function UTILS.clamp_angle(angle, min, max)
+    local inside
+
+    if min <= max then
+        inside = angle >= min and angle <= max
+    else
+        inside = angle >= min or angle <= max
+    end
+
+    if inside then
+        return angle
+    end
+
+    local dist_min = math.abs(UTILS.angle_to_180_format(angle - min))
+    local dist_max = math.abs(UTILS.angle_to_180_format(angle - max))
+
+    return dist_min <= dist_max and min or max
+end

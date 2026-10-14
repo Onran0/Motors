@@ -31,10 +31,10 @@
         },
 
         "min_angle": {
-            "type": "int16"
+            "type": "float32"
         },
         "max_angle": {
-            "type": "int16"
+            "type": "float32"
         },
 
         "invert_signal": {

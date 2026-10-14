@@ -3,5 +3,8 @@
   "title": "The Motors",
   "version": "1.0",
   "creator": "Onran",
-  "description": "Use Motors for move voxels via wires"
+  "description": "Use Motors for move voxels via wires",
+  "dependencies": [
+      "kompot"
+  ]
 }
