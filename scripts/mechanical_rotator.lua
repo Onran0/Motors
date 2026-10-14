@@ -24,6 +24,7 @@ function on_interact(x, y, z)
                     motors__mechanical_rotator_platform = {
                         contr = contr.id,
                         block_pos = { x, y, z },
+                        angle = 0,
                         axis = axis
                     }
                 }
