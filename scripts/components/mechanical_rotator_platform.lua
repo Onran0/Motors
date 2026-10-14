@@ -53,6 +53,8 @@ function on_physics_update()
 end
 
 function update_angle(delta)
+    -- here's min_speed & max_speed is degrees per second
+
     local final_normalized_signal = normalized_signal
 
     if data.invert_signal then

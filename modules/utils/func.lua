@@ -175,3 +175,7 @@ end
 function UTILS.angle_to_180_format(angle)
     return (angle + 180) % 360 - 180
 end
+
+function UTILS.rpm_to_degrees_per_sec(rpm)
+    return rpm / 60 * 360
+end

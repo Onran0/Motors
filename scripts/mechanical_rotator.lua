@@ -3,6 +3,20 @@
 
 local assembler = require "assembler"
 
+function on_placed(x, y, z)
+    -- here's min_speed & max_speed is RPM
+
+    block.set_field(x, y, z, "mode", MECH_ROTATOR_MODE_ROTATION)
+
+    block.set_field(x, y, z, "min_speed", 15)
+    block.set_field(x, y, z, "max_speed", -15)
+
+    block.set_field(x, y, z, "min_angle", 0)
+    block.set_field(x, y, z, "max_angle", 360)
+
+    block.set_field(x, y, z, "invert_signal", 0)
+end
+
 function on_interact(x, y, z)
     local axis = { block.get_Y(x, y, z) }
 
@@ -22,15 +36,15 @@ function on_interact(x, y, z)
                 { x + 0.5, y + 0.5, z + 0.5 },
                 {
                     motors__mechanical_rotator_platform = {
-                        mode = MECH_ROTATOR_MODE_ROTATION,
+                        mode = block.get_field(x, y, z, "mode"),
 
-                        min_speed = 80,
-                        max_speed = -80,
+                        min_speed = UTILS.rpm_to_degrees_per_sec(block.get_field(x, y, z, "min_speed")),
+                        max_speed = UTILS.rpm_to_degrees_per_sec(block.get_field(x, y, z, "max_speed")),
 
-                        min_angle = 0,
-                        max_angle = 360,
+                        min_angle = block.get_field(x, y, z, "min_angle"),
+                        max_angle = block.get_field(x, y, z, "max_angle"),
 
-                        invert_signal = false,
+                        invert_signal = block.get_field(x, y, z, "invert_signal") == 1,
 
                         contr = contr.id,
                         block_pos = { x, y, z },

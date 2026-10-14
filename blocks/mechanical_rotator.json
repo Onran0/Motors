@@ -17,6 +17,28 @@
         },
         "contraption_uid": {
             "type": "int64"
+        },
+
+        "mode": {
+            "type": "int8"
+        },
+
+        "min_speed": {
+            "type": "int16"
+        },
+        "max_speed": {
+            "type": "int16"
+        },
+
+        "min_angle": {
+            "type": "int16"
+        },
+        "max_angle": {
+            "type": "int16"
+        },
+
+        "invert_signal": {
+            "type": "int8"
         }
     }
 }
