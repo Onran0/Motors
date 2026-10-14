@@ -9,6 +9,8 @@ local tsf = entity.transform
 local DISASSEMBLE_DURATION_SEC = 1.0
 local MIN_ANGLE_DIFF_TO_DISASSEMBLE = 0.25
 
+normalized_signal = 0.0 -- normalized input signal
+
 -- TODO: instead of defined disassemble use closest 90-multiple angle to current angle
 local src_angle = 0
 
@@ -50,6 +52,24 @@ function on_physics_update()
     end
 end
 
+function update_angle(delta)
+    local final_normalized_signal = normalized_signal
+
+    if data.invert_signal then
+        final_normalized_signal = 1.0 - final_normalized_signal
+    end
+
+    if data.mode == MECH_ROTATOR_MODE_ROTATION then
+        angle = (angle + UTILS.lerp(data.min_speed, data.max_speed, final_normalized_signal) * delta) % 360
+
+        if data.min_angle then
+            angle = math.clamp(angle, data.min_angle, data.max_angle)
+        end
+    elseif data.mode == MECH_ROTATOR_MODE_ANGLE then
+        angle = UTILS.lerp(data.min_angle, data.max_angle, final_normalized_signal)
+    end
+end
+
 function on_render(delta)
     if data.disassembling then
         if UTILS.angles_dist(angle, data.disassemble_angle) <= MIN_ANGLE_DIFF_TO_DISASSEMBLE then
@@ -69,7 +89,7 @@ function on_render(delta)
 
         angle = UTILS.lerp_angle(angle, data.disassemble_angle, data.disassemble_progress)
     else
-        angle = angle + 45 * delta
+        update_angle(delta)
     end
 
     data.contr:set_rot(vec3.mul(data.axis, angle))

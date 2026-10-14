@@ -22,6 +22,16 @@ function on_interact(x, y, z)
                 { x + 0.5, y + 0.5, z + 0.5 },
                 {
                     motors__mechanical_rotator_platform = {
+                        mode = MECH_ROTATOR_MODE_ROTATION,
+
+                        min_speed = 80,
+                        max_speed = -80,
+
+                        min_angle = 0,
+                        max_angle = 360,
+
+                        invert_signal = false,
+
                         contr = contr.id,
                         block_pos = { x, y, z },
                         angle = 0,
