@@ -1,6 +1,8 @@
 -- Copyright (C) 2026 Onran
 -- SPDX-License-Identifier: GPL-3.0-only
 
+local used_model_ids = { }
+
 local SIDE_DIRECTIONS = {
     ["top"] = { 0, 1, 0 },
     ["bottom"] = { 0, -1, 0 },
@@ -61,7 +63,22 @@ local function add_edges(vcm_buffer, min, max)
     add_edge(vcm_buffer, { max[1], max[2], min[3] }, { max[1], max[2], max[3] }, { 0, 0, 1 })
 end
 
-function M.build_model(min, max, entity_uid)
+function M.build_model(min, max)
+    local id
+
+    for used_id, has_holder in ipairs(used_model_ids) do
+        if not has_holder then
+            id = used_id
+            used_model_ids[used_id] = true
+            break
+        end
+    end
+
+    if not id then
+        table.insert(used_model_ids, true)
+        id = #used_model_ids
+    end
+
     local vcm_buffer = { }
 
     local minX, minY, minZ = unpack(min)
@@ -121,11 +138,17 @@ function M.build_model(min, max, entity_uid)
 
     local content = table.concat(vcm_buffer, '\n')
 
-    local model_name = "motors_glue_area_model_" .. entity_uid
+    local model_name = "motors_glue_area_model_" .. id
 
     assets.parse_model("vcm", content, model_name, model_name)
 
-    return model_name
+    return model_name, id
+end
+
+function M.free_model_id(id)
+    if used_model_ids[id] then
+        used_model_ids[id] = false
+    end
 end
 
 return M

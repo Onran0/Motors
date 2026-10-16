@@ -15,6 +15,8 @@ local rig = entity.skeleton
 need_model_update = true
 destroying = false
 
+local model_id
+
 local prev_target_edges_color = EDGES_AIM_OFF_COLOR
 local target_edges_color = prev_target_edges_color
 local edges_color_interp_factor = 1.0
@@ -30,8 +32,16 @@ local function change_edges_color(new_color)
     end
 end
 
+function on_despawn()
+    glue_area_model_builder.free_model_id(model_id)
+end
+
 function on_render(delta)
     if need_model_update then
+        if model_id then
+            glue_area_model_builder.free_model_id(model_id)
+        end
+
         local area = glue_manager.get_area_by_entity(entity)
 
         if not area then
@@ -44,7 +54,9 @@ function on_render(delta)
         local min = vec3.add(area.min, offset)
         local max = vec3.add(area.max, offset)
 
-        local model = glue_area_model_builder.build_model(
+        local model
+
+        model, model_id = glue_area_model_builder.build_model(
                 vec3.sub(vec3.sub(min, vec3.mul(max, 0.5)), { 0.5, 0.5, 0.5 }),
                 vec3.sub(vec3.sub(max, vec3.mul(max, 0.5)), { 0.5, 0.5, 0.5 }),
                 entity:get_uid()
