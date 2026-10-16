@@ -17,12 +17,25 @@ local function add_block(mesh, origin, x, y, z)
 end
 
 function M.assemble_contraption(pos, origin)
-    local mesh = Contraption.new(origin)
+    local mesh
 
     if block.get(unpack(pos)) ~= 0 then
-        local glued_blocks = glue_manager.get_glued_blocks(unpack(pos))
+        local glued_blocks, glue_areas = glue_manager.get_glued_blocks_and_areas(unpack(pos))
 
         if #glued_blocks > 0 then
+            for i, uid in ipairs(glue_areas) do
+                local min, max = glue_manager.get_area_min_max_by_uid(uid)
+
+                glue_areas[i] = {
+                    min = min,
+                    max = max
+                }
+
+                glue_manager.delete_area_by_uid(uid)
+            end
+
+            mesh = Contraption.new(origin, glue_areas)
+
             for _, glued_pos in ipairs(glued_blocks) do
                 add_block(mesh, origin, unpack(glued_pos))
             end
@@ -31,6 +44,7 @@ function M.assemble_contraption(pos, origin)
                 block.set(glued_pos[1], glued_pos[2], glued_pos[3], 0, true)
             end
         else
+            mesh = Contraption.new(origin)
             add_block(mesh, origin, unpack(pos))
             block.set(pos[1], pos[2], pos[3], 0, true)
         end
@@ -47,6 +61,12 @@ function M.disassemble_contraption(mesh)
 
         block.set(x, y, z, block_data.id, block_data.states, true)
         block.set_variant(x, y, z, block_data.variant)
+    end
+
+    if mesh.glue_areas then
+        for _, area_data in ipairs(mesh.glue_areas) do
+            glue_manager.add_area(area_data.min, area_data.max)
+        end
     end
 
     Contraption.remove(mesh.id)

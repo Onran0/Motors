@@ -13,7 +13,9 @@ local function get_area_id(area_table)
     end
 end
 
-local function add_blocks_from_area(area, dest, visited_areas)
+local function add_blocks_from_area(area, dest_blocks, dest_areas, visited_areas)
+    table.insert(dest_areas, get_area_id(area))
+
     visited_areas[get_area_id(area)] = true
 
     local minX, minY, minZ = unpack(area.min)
@@ -22,11 +24,11 @@ local function add_blocks_from_area(area, dest, visited_areas)
     for x = minX, maxX do
         for y = minY, maxY do
             for z = minZ, maxZ do
-                dest[#dest + 1] = { x, y, z }
+                dest_blocks[#dest_blocks + 1] = { x, y, z }
 
                 for _, sub_area in ipairs(M.get_glue_areas_at(x, y, z)) do
                     if not visited_areas[get_area_id(sub_area)] then
-                        add_blocks_from_area(sub_area, dest, visited_areas)
+                        add_blocks_from_area(sub_area, dest_blocks, dest_areas, visited_areas)
                     end
                 end
             end
@@ -68,21 +70,24 @@ function M.has_glue_areas_at(x, y, z)
     return M.get_glue_areas(x, y, z)
 end
 
-function M.get_glued_blocks(x, y, z)
+function M.get_glued_blocks_and_areas(x, y, z)
     local blocks = { }
+    local areas = { }
 
     local visited_areas = { }
 
     for _, area in ipairs(M.get_glue_areas_at(x, y, z)) do
-        add_blocks_from_area(area, blocks, visited_areas)
+        add_blocks_from_area(area, blocks, areas, visited_areas)
     end
 
-    return blocks
+    return blocks, areas
 end
 
-function M.add_area(posA, posB)
-    spawn_glue_particles(posA)
-    spawn_glue_particles(posB)
+function M.add_area(posA, posB, visual_effects)
+    if visual_effects then
+        spawn_glue_particles(posA)
+        spawn_glue_particles(posB)
+    end
 
     local min = UTILS.vec3_min(posA, posB)
     local max = UTILS.vec3_max(posA, posB)
@@ -103,26 +108,38 @@ function M.add_area(posA, posB)
     return entity, uid
 end
 
-function M.delete_area_by_uid(uid)
+function M.get_area_min_max_by_uid(uid)
+    local src_table = GLUE_AREAS[uid]
+
+    return src_table.min, src_table.max
+end
+
+function M.get_area_min_max_by_entity(entity)
+    return M.get_area_min_max_by_uid(entity:get_uid())
+end
+
+function M.delete_area_by_uid(uid, visual_effects)
     local comp = GLUE_AREAS[uid].entity:get_component("motors:glue_area")
 
-    if comp.destroying then
-        return false
+    if visual_effects then
+        if comp.destroying then
+            return false
+        else
+            comp.destroying = true
+            return true
+        end
     else
-        comp.destroying = true
+        GLUE_AREAS[uid].entity:despawn()
+        M.__on_entity_despawn(uid)
         return true
     end
 end
 
-function M.delete_area_by_entity(entity)
-    return M.delete_area_by_uid(entity:get_uid())
+function M.delete_area_by_entity(entity, visual_effects)
+    return M.delete_area_by_uid(entity:get_uid(), visual_effects)
 end
 
 function M.__on_entity_despawn(uid)
-    local area = GLUE_AREAS[uid]
-
-    GLUE_AREAS[area.entity:get_uid()] = nil
-
     GLUE_AREAS[uid] = nil
 end
 
