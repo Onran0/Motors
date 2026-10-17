@@ -49,12 +49,16 @@ function M.set_assembled(x, y, z, value)
                 block.get_field(x, y, z, "platform_entity_uid")
         ):get_component("motors:mechanical_rotator_platform"):disassemble()
     else
-        block.set_variant(x, y, z, 1)
-        block.set_field(x, y, z, "is_assembled", 1)
-
         local targetBlockPos = { x + axis[1], y + axis[2], z + axis[3] }
 
         local contr = assembler.assemble_contraption(targetBlockPos, targetBlockPos, { x, y, z })
+
+        if not contr then
+            return false
+        end
+
+        block.set_variant(x, y, z, 1)
+        block.set_field(x, y, z, "is_assembled", 1)
 
         local platformEntity = entities.spawn("motors:mechanical_rotator_platform",
                 { x + 0.5, y + 0.5, z + 0.5 },

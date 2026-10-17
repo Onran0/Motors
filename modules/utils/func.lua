@@ -198,3 +198,30 @@ function UTILS.clamp_angle(angle, min, max)
 
     return dist_min <= dist_max and min or max
 end
+
+local execute_on_render = { }
+
+function UTILS.execute_on_render(func, counter)
+    table.insert(execute_on_render, {
+        counter = counter or 1,
+        func = func
+    })
+end
+
+function UTILS.execute_deferred_to_on_render_actions()
+    for i = 1, #execute_on_render do
+        local data = execute_on_render[i]
+
+        data.counter = data.counter - 1
+
+        if data.counter <= 0 then
+            local status, err = pcall(data.func)
+
+            if not status then
+                print("failed to execute deferred to on render action: " .. err)
+            end
+
+            execute_on_render[i] = nil
+        end
+    end
+end

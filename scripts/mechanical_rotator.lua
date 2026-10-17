@@ -23,4 +23,6 @@ function on_interact(x, y, z)
     }
 
     hud.show_overlay("motors:mechanical_rotator_ui", false)
+
+    return true
 end

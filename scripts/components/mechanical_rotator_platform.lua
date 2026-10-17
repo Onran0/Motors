@@ -19,6 +19,7 @@ local data = table.deep_copy(SAVED_DATA.contr and SAVED_DATA or ARGS)
 angle = data.angle
 
 local rotation_matrix = ROTATION_MATRICES.pipe[block.get_rotation(unpack(data.block_pos))]
+local destroy_in_next_frame = false
 
 data.contr = Contraption.get(data.contr)
 
@@ -73,6 +74,11 @@ function update_angle(delta)
 end
 
 function on_render(delta)
+    if destroy_in_next_frame then
+        entity:despawn()
+        return
+    end
+
     if data.disassembling then
         if UTILS.angles_dist(angle, data.disassemble_angle) <= MIN_ANGLE_DIFF_TO_DISASSEMBLE then
             local bx, by, bz = unpack(data.block_pos)
@@ -82,7 +88,7 @@ function on_render(delta)
 
             assembler.disassemble_contraption(data.contr)
 
-            entity:despawn()
+            destroy_in_next_frame = true
 
             return
         end

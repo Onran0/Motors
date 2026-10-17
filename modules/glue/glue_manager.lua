@@ -160,6 +160,10 @@ function M.get_area_by_entity(entity)
     return area
 end
 
+function M.is_loaded(uid)
+    return GLUE_AREAS[uid] and GLUE_AREAS[uid].loaded
+end
+
 function M.load()
     if not file.exists(GLUE_AREAS_SAVING_FILE) then
         return
@@ -186,8 +190,6 @@ function M.load()
 
         max_uid = math.max(uid, max_uid)
     end
-
-    next_area_uid = max_uid + 1
 end
 
 function M.save()

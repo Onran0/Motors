@@ -16,25 +16,40 @@ local function add_block(mesh, origin, x, y, z)
     end
 end
 
-function M.assemble_contraption(pos, origin)
+function M.assemble_contraption(pos, origin, motor_block)
     local mesh
 
     if block.get(unpack(pos)) ~= 0 then
         local glued_blocks, glue_areas = glue_manager.get_glued_blocks_and_areas(unpack(pos))
 
         if #glued_blocks > 0 then
-            for i, uid in ipairs(glue_areas) do
-                local min, max = glue_manager.get_area_min_max_by_uid(uid)
+            local new_glue_areas = { }
 
-                glue_areas[i] = {
-                    min = min,
-                    max = max
-                }
+            for _, uid in ipairs(glue_areas) do
+                if glue_manager.is_loaded(uid) then
+                    local min, max = glue_manager.get_area_min_max_by_uid(uid)
 
-                glue_manager.delete_area_by_uid(uid)
+                    table.insert(new_glue_areas, {
+                        min = min,
+                        max = max
+                    })
+
+                    if motor_block and UTILS.is_inside_area(
+                            motor_block[1], motor_block[2], motor_block[3],
+                            min, max
+                    ) then
+                        return
+                    end
+                end
             end
 
-            mesh = Contraption.new(origin, glue_areas)
+            for _, uid in ipairs(glue_areas) do
+                if glue_manager.is_loaded(uid) then
+                    glue_manager.delete_area_by_uid(uid)
+                end
+            end
+
+            mesh = Contraption.new(origin, new_glue_areas)
 
             for _, glued_pos in ipairs(glued_blocks) do
                 add_block(mesh, origin, unpack(glued_pos))
@@ -48,28 +63,30 @@ function M.assemble_contraption(pos, origin)
             add_block(mesh, origin, unpack(pos))
             block.set(pos[1], pos[2], pos[3], 0, true)
         end
-    end
+    else mesh = Contraption.new(origin) end
 
     return mesh
 end
 
 function M.disassemble_contraption(mesh)
-    for _, block_data in pairs(mesh.blocks) do
-        local finalPos = vec3.add(block_data.local_pos, mesh.origin)
+    time.post_runnable(function()
+        for _, block_data in pairs(mesh.blocks) do
+            local finalPos = vec3.add(block_data.local_pos, mesh.origin)
 
-        local x, y, z = math.floor(finalPos[1]), math.floor(finalPos[2]), math.floor(finalPos[3])
+            local x, y, z = math.floor(finalPos[1]), math.floor(finalPos[2]), math.floor(finalPos[3])
 
-        block.set(x, y, z, block_data.id, block_data.states, true)
-        block.set_variant(x, y, z, block_data.variant)
-    end
-
-    if mesh.glue_areas then
-        for _, area_data in ipairs(mesh.glue_areas) do
-            glue_manager.add_area(area_data.min, area_data.max)
+            block.set(x, y, z, block_data.id, block_data.states, true)
+            block.set_variant(x, y, z, block_data.variant)
         end
-    end
 
-    Contraption.remove(mesh.id)
+        if mesh.glue_areas then
+            for _, area_data in ipairs(mesh.glue_areas) do
+                glue_manager.add_area(area_data.min, area_data.max)
+            end
+        end
+
+        Contraption.remove(mesh.id)
+    end)
 end
 
 return M

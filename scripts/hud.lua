@@ -1,6 +1,8 @@
 local glue_manager = require "glue/glue_manager"
 
 function on_hud_render()
+    UTILS.execute_deferred_to_on_render_actions()
+
     local pid = hud.get_player()
 
     local item_id, count = inventory.get(player.get_inventory(pid))
@@ -10,7 +12,7 @@ function on_hud_render()
     local out = world.raycast(
             {
                 start = cameras.get(player.get_camera(pid)):get_pos(),
-                dir = player.get_dir(pid), distance = 5,
+                dir = player.get_dir(pid), distance = GLUE_AREAS_INTERACTION_DISTANCE,
 
                 ignore_uid = player.get_entity(pid),
 
