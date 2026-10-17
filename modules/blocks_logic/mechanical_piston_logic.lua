@@ -1,0 +1,97 @@
+-- Copyright (C) 2026 Onran
+-- SPDX-License-Identifier: GPL-3.0-only
+
+local assembler = require "assembler"
+
+local M = { }
+
+function M.set_settings(x, y, z, settings)
+    -- here's min_speed & max_speed is RPM
+
+    block.set_field(x, y, z, "mode", settings.mode)
+    block.set_field(x, y, z, "disassemble_condition", settings.disassemble_condition)
+
+    block.set_field(x, y, z, "min_speed", settings.min_speed)
+    block.set_field(x, y, z, "max_speed", settings.max_speed)
+
+    block.set_field(x, y, z, "max_extension", settings.max_extension)
+
+    block.set_field(x, y, z, "invert_signal", settings.invert_signal and 1 or 0)
+end
+
+function M.on_placed(x, y, z)
+    -- TODO
+    M.set_settings(x, y, z, {
+        mode = MECH_PISTON_MODE_SPEED_CONTROL,
+        disassemble_condition = MECH_PISTON_DISCONDITION_STOP_IN_SRC_POS,
+
+        min_speed = 5,
+        max_speed = -5,
+
+        max_extension = 5,
+
+        invert_signal = false
+    })
+end
+
+function M.is_assembled(x, y, z)
+    return block.get_field(x, y, z, "is_assembled") == 1
+end
+
+function M.set_assembled(x, y, z, value)
+    if M.is_assembled(x, y, z) == value then
+        return
+    end
+
+    local axis = { block.get_Y(x, y, z) }
+
+    if block.get_field(x, y, z, "is_assembled") == 1 then
+        entities.get(
+                block.get_field(x, y, z, "platform_entity_uid")
+        ):get_component("motors:mechanical_piston_platform"):disassemble()
+    else
+        local targetBlockPos = { x + axis[1], y + axis[2], z + axis[3] }
+
+        local contr = assembler.assemble_contraption(targetBlockPos, targetBlockPos, { x, y, z })
+
+        if not contr then
+            return false
+        end
+
+        block.set_variant(x, y, z, 1)
+        block.set_field(x, y, z, "is_assembled", 1)
+
+        local platform_entity = entities.spawn("motors:mechanical_piston_platform",
+                { x + 0.5, y + 0.5, z + 0.5 },
+                {
+                    motors__mechanical_piston_platform = {
+                        mode = block.get_field(x, y, z, "mode"),
+                        disassemble_condition = block.get_field(x, y, z, "disassemble_condition"),
+
+                        min_speed = block.get_field(x, y, z, "min_speed"),
+                        max_speed = block.get_field(x, y, z, "max_speed"),
+
+                        max_extension = block.get_field(x, y, z, "max_extension"),
+
+                        invert_signal = block.get_field(x, y, z, "invert_signal") == 1,
+
+                        contr = contr.id,
+                        block_pos = { x, y, z },
+                        extension = 0,
+                        axis = axis
+                    }
+                }
+        )
+
+        block.set_field(x, y, z, "platform_entity_uid", platform_entity:get_uid())
+        block.set_field(x, y, z, "contraption_uid", contr.id)
+    end
+
+    return true
+end
+
+require("blocks_logic/motors_logic_registry").register_motor_logic(
+        "motors:mechanical_piston", M
+)
+
+return M

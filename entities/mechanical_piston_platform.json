@@ -1,0 +1,9 @@
+{
+    "skeleton-name": "mechanical_piston_platform",
+    "components": [
+        "motors:mechanical_piston_platform"
+    ],
+    "blocking": true,
+    "solid": true,
+    "body-type": "static"
+}

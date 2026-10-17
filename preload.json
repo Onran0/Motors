@@ -1,6 +1,7 @@
 {
     "models": [
-        "mechanical_rotator_platform"
+        "mechanical_rotator_platform",
+        "mechanical_piston_platform"
     ],
     "textures": [
         "glue_area",
