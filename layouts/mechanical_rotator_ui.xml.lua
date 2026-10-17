@@ -29,16 +29,6 @@ local function apply_settings()
     )
 end
 
-local function is_assembled(settings)
-    return block.get_field(settings.x, settings.y, settings.z, "is_assembled") == 1
-end
-
-local function set_assembled(settings, value)
-    if value ~= is_assembled(settings) then
-        mech_rotator_logic.change_assemble_state(settings.x, settings.y, settings.z)
-    end
-end
-
 function on_open()
     handle = K.mount({target = document.panel, theme = UI.theme(), content = function()
         UI.Panel({ title = "Настройки механического вращателя", width = 700 }, function()
@@ -48,7 +38,7 @@ function on_open()
                 states = {
                     mode = K.state(settings.mode + 1),
 
-                    assemble_button = K.state(is_assembled(settings)),
+                    assemble_button = K.state(mech_rotator_logic.is_assembled(settings.x, settings.y, settings.z)),
 
                     min_speed = K.state(settings.min_speed),
                     max_speed = K.state(settings.max_speed),
@@ -146,7 +136,10 @@ function on_open()
                             states.assemble_button.value = not states.assemble_button.value
                             time.post_runnable(
                                     function()
-                                        set_assembled(settings, states.assemble_button.value)
+                                        mech_rotator_logic.set_assembled(
+                                                settings.x, settings.y, settings.z,
+                                                states.assemble_button.value
+                                        )
                                     end
                             )
                         end,

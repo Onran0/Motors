@@ -33,7 +33,15 @@ function M.on_placed(x, y, z)
     })
 end
 
-function M.change_assemble_state(x, y, z)
+function M.is_assembled(x, y, z)
+    return block.get_field(x, y, z, "is_assembled") == 1
+end
+
+function M.set_assembled(x, y, z, value)
+    if M.is_assembled(x, y, z) == value then
+        return
+    end
+
     local axis = { block.get_Y(x, y, z) }
 
     if block.get_field(x, y, z, "is_assembled") == 1 then
@@ -76,5 +84,9 @@ function M.change_assemble_state(x, y, z)
 
     return true
 end
+
+require("blocks_logic/motors_logic_registry").register_motor_logic(
+        "motors:mechanical_rotator", M
+)
 
 return M
