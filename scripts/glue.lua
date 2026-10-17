@@ -30,4 +30,6 @@ function on_use_on_block(x, y, z)
 
         first_pos = nil
     end
+
+    return true
 end
