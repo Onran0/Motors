@@ -47,7 +47,7 @@ function disassemble()
 end
 
 function on_physics_update()
-    if block.get(unpack(data.block_pos)) ~= block.index("motors:mechanical_rotator") then
+    if block.get(unpack(data.block_pos)) ~= block.index("motors:rotator") then
         assembler.disassemble_contraption(data.contr)
         entity:despawn()
     end
@@ -62,13 +62,13 @@ function update_angle(delta)
         final_normalized_signal = 1.0 - final_normalized_signal
     end
 
-    if data.mode == MECH_ROTATOR_MODE_ROTATION then
+    if data.mode == ROTATOR_MODE_ROTATION then
         angle = angle + UTILS.lerp(data.min_speed, data.max_speed, final_normalized_signal) * delta
 
         if data.min_angle then
             angle = UTILS.clamp_angle(UTILS.angle_to_180_format(angle % 360), data.min_angle, data.max_angle)
         end
-    elseif data.mode == MECH_ROTATOR_MODE_ANGLE then
+    elseif data.mode == ROTATOR_MODE_ANGLE then
         angle = UTILS.lerp(data.min_angle, data.max_angle, final_normalized_signal)
     end
 end

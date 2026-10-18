@@ -1,11 +1,11 @@
 {
     "rotation": "pipe",
     "model": "custom",
-    "model-name": "mechanical_rotator",
+    "model-name": "rotator",
     "state-based": {
         "bits": 1,
         "variants": [
-            { "model-name": "mechanical_rotator_base" }
+            { "model-name": "rotator_base" }
         ]
     },
     "fields": {

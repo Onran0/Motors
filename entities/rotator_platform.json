@@ -1,7 +1,7 @@
 {
-    "skeleton-name": "mechanical_piston_platform",
+    "skeleton-name": "rotator_platform",
     "components": [
-        "motors:mechanical_piston_platform"
+        "motors:rotator_platform"
     ],
     "blocking": true,
     "solid": true,

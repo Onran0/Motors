@@ -21,7 +21,7 @@ end
 
 function M.on_placed(x, y, z)
     M.set_settings(x, y, z, {
-        mode = MECH_ROTATOR_MODE_ROTATION,
+        mode = ROTATOR_MODE_ROTATION,
 
         min_speed = 15,
         max_speed = -15,
@@ -47,7 +47,7 @@ function M.set_assembled(x, y, z, value)
     if block.get_field(x, y, z, "is_assembled") == 1 then
         entities.get(
                 block.get_field(x, y, z, "platform_entity_uid")
-        ):get_component("motors:mechanical_rotator_platform"):disassemble()
+        ):get_component("motors:rotator_platform"):disassemble()
     else
         local targetBlockPos = { x + axis[1], y + axis[2], z + axis[3] }
 
@@ -60,10 +60,10 @@ function M.set_assembled(x, y, z, value)
         block.set_variant(x, y, z, 1)
         block.set_field(x, y, z, "is_assembled", 1)
 
-        local platformEntity = entities.spawn("motors:mechanical_rotator_platform",
+        local platformEntity = entities.spawn("motors:rotator_platform",
                 { x + 0.5, y + 0.5, z + 0.5 },
                 {
-                    motors__mechanical_rotator_platform = {
+                    motors__rotator_platform = {
                         mode = block.get_field(x, y, z, "mode"),
 
                         min_speed = UTILS.rpm_to_degrees_per_sec(block.get_field(x, y, z, "min_speed")),
@@ -90,7 +90,7 @@ function M.set_assembled(x, y, z, value)
 end
 
 require("blocks_logic/motors_logic_registry").register_motor_logic(
-        "motors:mechanical_rotator", M
+        "motors:rotator", M
 )
 
 return M

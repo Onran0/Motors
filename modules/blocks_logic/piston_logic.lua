@@ -22,8 +22,8 @@ end
 function M.on_placed(x, y, z)
     -- TODO
     M.set_settings(x, y, z, {
-        mode = MECH_PISTON_MODE_SPEED_CONTROL,
-        disassemble_condition = MECH_PISTON_DISCONDITION_STOP_IN_SRC_POS,
+        mode = PISTON_MODE_SPEED_CONTROL,
+        disassemble_condition = PISTON_DISCONDITION_STOP_IN_SRC_POS,
 
         min_speed = 5,
         max_speed = -5,
@@ -48,7 +48,7 @@ function M.set_assembled(x, y, z, value)
     if block.get_field(x, y, z, "is_assembled") == 1 then
         entities.get(
                 block.get_field(x, y, z, "platform_entity_uid")
-        ):get_component("motors:mechanical_piston_platform"):disassemble()
+        ):get_component("motors:piston_platform"):disassemble()
     else
         local targetBlockPos = { x + axis[1], y + axis[2], z + axis[3] }
 
@@ -61,10 +61,10 @@ function M.set_assembled(x, y, z, value)
         block.set_variant(x, y, z, 1)
         block.set_field(x, y, z, "is_assembled", 1)
 
-        local platform_entity = entities.spawn("motors:mechanical_piston_platform",
+        local platform_entity = entities.spawn("motors:piston_platform",
                 { x + 0.5, y + 0.5, z + 0.5 },
                 {
-                    motors__mechanical_piston_platform = {
+                    motors__piston_platform = {
                         mode = block.get_field(x, y, z, "mode"),
                         disassemble_condition = block.get_field(x, y, z, "disassemble_condition"),
 
@@ -91,7 +91,7 @@ function M.set_assembled(x, y, z, value)
 end
 
 require("blocks_logic/motors_logic_registry").register_motor_logic(
-        "motors:mechanical_piston", M
+        "motors:piston", M
 )
 
 return M

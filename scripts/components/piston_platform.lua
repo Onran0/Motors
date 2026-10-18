@@ -48,7 +48,7 @@ function disassemble()
 end
 
 function on_physics_update()
-    if block.get(unpack(data.block_pos)) ~= block.index("motors:mechanical_piston") then
+    if block.get(unpack(data.block_pos)) ~= block.index("motors:piston") then
         assembler.disassemble_contraption(data.contr)
         entity:despawn()
     end
@@ -61,12 +61,12 @@ function update_extension(delta)
         final_normalized_signal = 1.0 - final_normalized_signal
     end
 
-    if data.mode == MECH_PISTON_MODE_SPEED_CONTROL then
+    if data.mode == PISTON_MODE_SPEED_CONTROL then
         extension = math.clamp(
                 extension + UTILS.lerp(data.min_speed, data.max_speed, final_normalized_signal) * delta,
                 0, data.max_extension
         )
-    elseif data.mode == MECH_PISTON_MODE_EXTENSION_CONTROL then
+    elseif data.mode == PISTON_MODE_EXTENSION_CONTROL then
         extension = data.max_extension * final_normalized_signal
     end
 end

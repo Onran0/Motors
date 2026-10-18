@@ -1,8 +1,0 @@
-@box from (0, 0, 0) to (1, 0.625, 1) origin (0.5, 0, 0.5) {
-    @part tags (north) texture "blocks:mechanical_rotator" region (0, 0.34375, 0.25, 0.5)
-    @part tags (east) texture "blocks:mechanical_rotator" region (0.5, 0.84375, 0.75, 1)
-    @part tags (south) texture "blocks:mechanical_rotator" region (0.5, 0.6875, 0.75, 0.84375)
-    @part tags (west) texture "blocks:mechanical_rotator" region (0.25, 0.34375, 0.5, 0.5)
-    @part tags (top) texture "blocks:mechanical_rotator" region (0, 0.75, 0.25, 1)
-    @part tags (bottom) texture "blocks:mechanical_rotator" region (0, 0.5, 0.25, 0.75)
-}

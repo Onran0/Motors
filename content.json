@@ -1,16 +1,16 @@
 {
-  "entities": [
-    "phys_block",
-    "mechanical_rotator_platform",
-    "glue_area",
-    "mechanical_piston_platform"
+  "blocks": [
+    "piston",
+    "rotator"
   ],
   "items": [
     "glue",
     "assembler"
   ],
-  "blocks": [
-    "mechanical_rotator",
-    "mechanical_piston"
+  "entities": [
+    "phys_block",
+    "glue_area",
+    "piston_platform",
+    "rotator_platform"
   ]
 }
