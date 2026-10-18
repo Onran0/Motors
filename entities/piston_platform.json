@@ -3,7 +3,8 @@
     "components": [
         "motors:piston_platform"
     ],
+    "hitbox": [ 1, 1, 1 ],
     "blocking": true,
     "solid": true,
-    "body-type": "static"
+    "body-type": "dynamic"
 }

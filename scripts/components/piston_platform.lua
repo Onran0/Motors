@@ -4,9 +4,15 @@
 local assembler = require "assembler"
 local Contraption = require "classes/Contraption"
 
-local tsf = entity.transform
+local ROD_SIZE = 0.25
+local BASE_HEIGHT = 0.75
+local BASE_EMPTY_SPACE = 1 - BASE_HEIGHT
 
-local DISASSEMBLE_EXTENSION_REDUCE_SPEED_MS = 12
+local tsf = entity.transform
+local rig = entity.skeleton
+local body = entity.rigidbody
+
+local rod_bone = rig:index("rod")
 
 normalized_signal = 0.0 -- normalized input signal
 
@@ -72,46 +78,63 @@ function update_extension(delta)
 end
 
 function on_render(delta)
+    if not destroy_in_next_frame then
+        if data.disassembling then
+            if extension == data.disassemble_extension then
+                local bx, by, bz = unpack(data.block_pos)
+
+                block.set_variant(bx, by, bz, 0)
+                block.set_field(bx, by, bz, "is_assembled", 0)
+
+                assembler.disassemble_contraption(data.contr)
+
+                destroy_in_next_frame = true
+            end
+
+            extension = math.max(
+                    extension - math.max(
+                            math.abs(data.min_speed),
+                            math.abs(data.max_speed)
+                    ) * delta,
+                    data.disassemble_extension
+            )
+        else
+            update_extension(delta)
+        end
+    end
+
+    data.contr:set_pos(vec3.add(data.block_pos, vec3.mul(axis, extension + 1)))
+
+    local pos = vec3.add(
+            vec3.add(
+                    data.block_pos, vec3.mul(axis, extension / 2 + BASE_EMPTY_SPACE / 2)
+            ),
+            { 0.5, 0.5, 0.5 }
+    )
+
+    tsf:set_pos(pos)
+
+    rig:set_matrix(0, mat4.translate(
+            { 0, extension / 2 - BASE_EMPTY_SPACE / 2, 0 }
+    ))
+
     if destroy_in_next_frame then
         entity:despawn()
         return
     end
 
-    if data.disassembling then
-        if extension == data.disassemble_extension then
-            local bx, by, bz = unpack(data.block_pos)
+    local body_size = vec3.mul(axis, math.max(extension + BASE_HEIGHT, 0.01))
 
-            block.set_variant(bx, by, bz, 0)
-            block.set_field(bx, by, bz, "is_assembled", 0)
-
-            assembler.disassemble_contraption(data.contr)
-
-            destroy_in_next_frame = true
-
-            return
+    for i = 1, #body_size do
+        if body_size[i] == 0 then
+            body_size[i] = 0.99999
         end
-
-        extension = math.max(
-                extension - math.max(
-                        DISASSEMBLE_EXTENSION_REDUCE_SPEED_MS,
-                        math.max(
-                                math.abs(data.min_speed),
-                                math.abs(data.max_speed)
-                        )
-                ) * delta,
-                data.disassemble_extension
-        )
-    else
-        update_extension(delta)
     end
 
-    data.contr:set_pos(vec3.add(data.block_pos, vec3.mul(axis, extension + 1)))
-    tsf:set_pos(
-            vec3.add(
-                    vec3.add(
-                            data.block_pos, vec3.mul(axis, extension)
-                    ),
-                    { 0.5, 0.5, 0.5 }
-            )
-    )
+    body:set_size(body_size)
+
+    rig:set_matrix(rod_bone, mat4.mul(
+            mat4.translate({ 0, extension/2 - extension - BASE_EMPTY_SPACE, 0 }),
+            mat4.scale({ ROD_SIZE, extension + BASE_EMPTY_SPACE, ROD_SIZE })
+    ))
 end
