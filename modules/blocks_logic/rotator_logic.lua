@@ -21,7 +21,7 @@ end
 
 function M.on_placed(x, y, z)
     M.set_settings(x, y, z, {
-        mode = ROTATOR_MODE_ROTATION,
+        mode = ROTATOR_MODE_SPEED_CONTROL,
 
         min_speed = 15,
         max_speed = -15,

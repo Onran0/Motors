@@ -52,7 +52,7 @@ function on_open()
                 K.Text("Режим работы", { style = "title" })
 
                 UI.Segmented({
-                    options = { "Вращение", "Заданный угол" },
+                    options = { "Контроль скорости", "Контроль угла" },
                     selected = states.mode.value,
                     on_select = function(v)
                         states.mode.value = v
