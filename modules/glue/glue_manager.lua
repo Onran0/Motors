@@ -14,7 +14,7 @@ local function get_area_id(area_table)
 end
 
 local function add_blocks_from_area(area, dest_blocks, dest_areas, visited_areas)
-    table.insert(dest_areas, get_area_id(area))
+    table.insert_unique(dest_areas, get_area_id(area))
 
     visited_areas[get_area_id(area)] = true
 
@@ -94,7 +94,8 @@ function M.add_area(posA, posB, visual_effects)
 
     local area = {
         min = min,
-        max = max
+        max = max,
+        loaded = true
     }
 
     local entity = entities.spawn("motors:glue_area", min)
