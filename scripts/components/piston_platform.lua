@@ -25,6 +25,7 @@ local axis = { block.get_Y(unpack(data.block_pos)) }
 local rotation_matrix = ROTATION_MATRICES.pipe[block.get_rotation(unpack(data.block_pos))]
 
 tsf:set_rot(rotation_matrix)
+body:set_mass(100000)
 
 extension = data.extension
 
