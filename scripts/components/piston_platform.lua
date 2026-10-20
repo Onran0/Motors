@@ -107,15 +107,18 @@ function on_render(delta)
 
     local pos = vec3.add(
             vec3.add(
-                    data.block_pos, vec3.mul(axis, extension / 2 + BASE_EMPTY_SPACE / 2)
+                    vec3.add(
+                            data.block_pos, vec3.mul(axis, extension / 2)
+                    ),
+                    { 0.5, 0.5, 0.5 }
             ),
-            { 0.5, 0.5, 0.5 }
+            vec3.mul(axis, {0.5, 0.5, 0.5})
     )
 
     tsf:set_pos(pos)
 
     rig:set_matrix(0, mat4.translate(
-            { 0, extension / 2 - BASE_EMPTY_SPACE / 2, 0 }
+            { 0, extension / 2 - BASE_EMPTY_SPACE * 2, 0 }
     ))
 
     if destroy_in_next_frame then
@@ -123,7 +126,7 @@ function on_render(delta)
         return
     end
 
-    local body_size = vec3.mul(axis, math.max(extension + BASE_HEIGHT, 0.01))
+    local body_size = vec3.mul(axis, math.max(extension, 0.01))
 
     for i = 1, #body_size do
         if body_size[i] == 0 then

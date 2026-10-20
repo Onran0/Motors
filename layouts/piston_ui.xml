@@ -1,3 +1,1 @@
-<container id="root" size="700,600">
-    <container id="panel" size="700,600" pos="0,100"/>
-</container>
+<container id="root" size-func="unpack(gui.get_viewport())"/>
