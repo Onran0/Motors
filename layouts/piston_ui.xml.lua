@@ -36,7 +36,7 @@ function on_open()
     handle = K.mount({target = document.root, theme = UI.theme(), content = function()
         K.Box({ modifier = K.M:fill_max_size() }, function()
             UI.Panel({ title = "Настройки поршня", width = 700,
-                       modifier = K.M:background({0,0,0,0}):align("center"),
+                       modifier = K.M:background({0,0,0,0}):align("center")
             }, function()
                 K.Column({spacing = 12}, function()
                     local settings = PISTON_SETTINGS
